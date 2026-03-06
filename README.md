@@ -1,6 +1,12 @@
-# 멀티 에이전트 개발 워크플로우
+# 멀티 에이전트 개발 워크플로우(베타 테스트 버전)
 
 Claude Code 기반의 멀티 에이전트 시스템으로, Jira 티켓에서 구현 및 테스트 완료까지의 개발 사이클을 자동화합니다.
+
+## 주의 사항
+현재 이 프로젝트는 베타 테스팅 단계입니다. 프로젝트 이용 시, 아래 주의 사항에 대해서는 책임지지 않습니다.
+* 사용 방식에 따라 Claude Code Token 을 과도하게 소비할 수도 있습니다.
+* Task 를 Divide and Conquer 기법을 이용하여 작은 단위로 세분화 해두지 않고 작업을 맡길 시, Context Window 가 넘어가 작업이 중단될 수 있습니다.
+* 현재는 시스템이 FE Stack 은 Typescript + Next.js, BE Stack 은 Python + FastAPI, DB 는 Postgres 로 구성된 시스템을 개발하는 데에 최적화되어 있습니다.
 
 ---
 
