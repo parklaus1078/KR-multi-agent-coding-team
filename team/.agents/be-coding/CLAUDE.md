@@ -8,15 +8,44 @@ API 명세서를 기반으로 `.rules/be-coding-rules.md`의 규칙을 준수하
 
 ## ⚡ 작업 시작 전 필수 체크 (절대 생략 불가)
 
+### 1. Rate Limit 체크
+
 아래 명령을 실행하고, 결과에 따라 행동한다:
 
-```
+```bash
 ! bash scripts/rate-limit-check.sh be-coding
 ```
 
 - **"✅ 여유 있음"** → 작업 진행
 - **"⚠️ 경고"** → 사용자에게 알리고, 동의 시 진행
 - **"🛑 중단"** → 즉시 작업 중단, 재개 가능 시간 안내 후 대기
+
+### 2. Git 브랜치 준비
+
+작업 전에 티켓 전용 브랜치를 준비한다. (`.config/git-workflow.json` 참조)
+
+```bash
+! bash scripts/git-branch-helper.sh prepare be-coding {티켓번호} {slug}
+```
+
+**예시:**
+```bash
+bash scripts/git-branch-helper.sh prepare be-coding PLAN-001 user-auth
+# → feature/be/PLAN-001-user-auth 브랜치 생성/전환
+```
+
+**동작:**
+- 설정된 베이스 브랜치(기본: `dev`)에서 새 브랜치 생성
+- 이미 존재하는 브랜치면 해당 브랜치로 전환
+- 커밋되지 않은 변경사항이 있으면 자동으로 stash
+
+**스킵 조건:**
+- `.config/git-workflow.json`에서 `enabled: false`인 경우 스킵 가능
+- Git 저장소가 아닌 경우 스킵
+
+**브랜치 준비 실패 시:**
+- 사용자에게 알리고 수동 브랜치 전환을 요청
+- 또는 현재 브랜치에서 작업 진행 여부 확인
 
 ---
 
@@ -110,7 +139,29 @@ ls be-api-requirements/{티켓번호}-* 2>/dev/null
 > ⚠️ Protocol은 반드시 구현체보다 먼저 작성한다. (섹션 6)
 > ⚠️ 도메인 예외는 `src/core/exceptions.py`가 아닌 `src/services/exceptions/{domain}_exceptions.py`에 작성한다. (섹션 4)
 
-### Step 4. 로그 작성 (필수, 구현 완료 후 즉시)
+### Step 4. 작업 완료 후 안내
+
+코드 구현이 완료되면 사용자에게 다음 단계를 안내한다:
+
+```
+✅ 백엔드 코드 구현 완료
+
+📍 현재 브랜치: feature/be/PLAN-001-user-auth
+📝 생성/수정된 파일: {N}개
+
+다음 단계:
+1. 코드 리뷰: 생성된 파일을 검토하세요.
+2. 커밋 생성:
+   git add .
+   git commit -m "feat(PLAN-001): 유저 인증 API 구현"
+3. 푸시 (선택):
+   git push origin feature/be/PLAN-001-user-auth
+
+브랜치 상태 확인:
+   bash scripts/git-branch-helper.sh status
+```
+
+### Step 5. 로그 작성 (필수, 구현 완료 후 즉시)
 
 ---
 

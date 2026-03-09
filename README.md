@@ -220,6 +220,100 @@ FE Coding Agent는 이 와이어프레임을 참조하여 상태를 React `useSt
 
 ---
 
+## Git 브랜치 워크플로우
+
+코딩 에이전트는 작업 시작 전 자동으로 티켓 전용 브랜치를 생성하고 전환합니다.
+
+### 설정 파일
+
+`.config/git-workflow.json`에서 브랜치 전략을 설정할 수 있습니다:
+
+```json
+{
+  "branch_strategy": {
+    "enabled": true,
+    "base_branch": "dev",
+    "auto_create": true,
+    "auto_checkout": true
+  }
+}
+```
+
+### 브랜치 네이밍 규칙
+
+| 에이전트 | 브랜치 패턴 | 예시 |
+|---------|-----------|------|
+| `be-coding` | `feature/be/{티켓번호}-{slug}` | `feature/be/PLAN-001-user-auth` |
+| `fe-coding` | `feature/fe/{티켓번호}-{slug}` | `feature/fe/PLAN-001-user-auth` |
+| `qa-be` | `test/be/{티켓번호}-{slug}` | `test/be/PLAN-001-user-auth` |
+| `qa-fe` | `test/fe/{티켓번호}-{slug}` | `test/fe/PLAN-001-user-auth` |
+
+### 자동 동작
+
+#### 작업 시작 시
+1. 설정된 베이스 브랜치(기본: `dev`)를 fetch
+2. 티켓 전용 브랜치가 없으면 생성
+3. 해당 브랜치로 자동 전환
+4. 커밋되지 않은 변경사항이 있으면 자동 stash
+
+#### 작업 완료 시
+- 에이전트가 커밋은 **하지 않음** (사람이 코드 리뷰 후 커밋)
+- 다음 단계 안내 (커밋 명령어 예시 제공)
+
+### 수동 브랜치 관리
+
+```bash
+# 브랜치 준비 (에이전트가 자동으로 실행)
+bash scripts/git-branch-helper.sh prepare be-coding PLAN-001 user-auth
+
+# 현재 Git 상태 확인
+bash scripts/git-branch-helper.sh status
+
+# 설정 확인
+bash scripts/git-branch-helper.sh config
+```
+
+### 일반적인 워크플로우
+
+```bash
+# 1. BE 코딩 에이전트 실행
+bash scripts/run-agent.sh be-coding --ticket PLAN-001
+# → 자동으로 feature/be/PLAN-001-user-auth 브랜치 생성/전환
+# → 코드 구현
+
+# 2. 코드 리뷰 후 커밋
+git add .
+git commit -m "feat(PLAN-001): 유저 인증 API 구현"
+
+# 3. FE 코딩 에이전트 실행
+bash scripts/run-agent.sh fe-coding --ticket PLAN-001
+# → 자동으로 feature/fe/PLAN-001-user-auth 브랜치 생성/전환
+# → 코드 구현
+
+# 4. 코드 리뷰 후 커밋
+git add .
+git commit -m "feat(PLAN-001): 유저 인증 UI 구현"
+
+# 5. 푸시 및 PR 생성
+git push origin feature/be/PLAN-001-user-auth
+git push origin feature/fe/PLAN-001-user-auth
+# GitHub에서 PR 생성
+```
+
+### 브랜치 전략 비활성화
+
+자동 브랜치 관리를 원하지 않는 경우:
+
+```json
+{
+  "branch_strategy": {
+    "enabled": false
+  }
+}
+```
+
+---
+
 ## 파일 네이밍 규칙
 
 모든 산출물 파일명은 티켓 번호를 prefix로 사용합니다.
