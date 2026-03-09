@@ -5,7 +5,7 @@
   "branch_strategy": {
     "enabled": true,
     "base_branch": "dev",
-    "naming_convention": "feature/{ticket-number}-{slug}",
+    "naming_convention": "feature/{ticket-number}",
     "auto_create": true,
     "auto_checkout": true,
     "auto_commit": false,
@@ -20,10 +20,10 @@
       "qa-fe": "test/fe"
     },
     "examples": {
-      "be-coding": "feature/be/PLAN-001-user-auth",
-      "fe-coding": "feature/fe/PLAN-001-user-auth",
-      "qa-be": "test/be/PLAN-001-user-auth",
-      "qa-fe": "test/fe/PLAN-001-user-auth"
+      "be-coding": "feature/be/PLAN-001",
+      "fe-coding": "feature/fe/PLAN-001",
+      "qa-be": "test/be/PLAN-001",
+      "qa-fe": "test/fe/PLAN-001"
     }
   },
 
