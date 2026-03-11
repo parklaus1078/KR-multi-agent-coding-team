@@ -1,6 +1,6 @@
 # Project Planner 임시 파일
-team/tickets/.plan-*.json
-team/tickets/.progress-*.json
+team/planning-materials/tickets/.plan-*.json
+team/planning-materials/tickets/.progress-*.json
 
 # Python
 __pycache__/

@@ -22,10 +22,10 @@ API 명세서와 테스트 케이스를 기반으로, 빠짐없이 검증되는 
 작업 시작 시 전달된 티켓 번호를 확인한다. (예: PROJ-123)
 **반드시 해당 티켓 번호가 prefix인 파일만 읽는다.**
 
-1. **테스트 케이스**: `be-test-cases/{티켓번호}-*.md`
-2. **API 명세서**: `be-api-requirements/{티켓번호}-*.md`
-3. **구현된 코드**: `be-project/src/` 디렉토리 전체
-4. **기존 테스트** (있는 경우): `be-project/tests/`
+1. **테스트 케이스**: `planning-materials/be-test-cases/{티켓번호}-*.md`
+2. **API 명세서**: `planning-materials/be-api-requirements/{티켓번호}-*.md`
+3. **구현된 코드**: `applications/be-project/src/` 디렉토리 전체
+4. **기존 테스트** (있는 경우): `applications/be-project/tests/`
 
 티켓 번호에 해당하는 파일이 없으면 즉시 작업을 중단하고 사용자에게 알린다.
 
@@ -38,8 +38,8 @@ API 명세서와 테스트 케이스를 기반으로, 빠짐없이 검증되는 
 전달받은 티켓 번호로 관련 파일을 확인한다:
 
 ```bash
-ls be-test-cases/{티켓번호}-* 2>/dev/null
-ls be-api-requirements/{티켓번호}-* 2>/dev/null
+ls planning-materials/be-test-cases/{티켓번호}-* 2>/dev/null
+ls planning-materials/be-api-requirements/{티켓번호}-* 2>/dev/null
 ```
 
 - 파일이 존재하면 → Step 1로 진행
@@ -48,13 +48,13 @@ ls be-api-requirements/{티켓번호}-* 2>/dev/null
 ```
 ❌ {티켓번호}에 해당하는 파일을 찾을 수 없습니다.
    PM Agent가 먼저 실행되었는지 확인해주세요.
-   bash scripts/run-agent.sh pm --ticket-file ./tickets/{티켓번호}.md
+   bash scripts/run-agent.sh pm --ticket-file ./planning-materials/tickets/{티켓번호}.md
 ```
 
 ### Step 1. 입력 파싱
 
-- `be-test-cases/{티켓번호}-*.md` 에서 테스트 케이스 목록 추출
-- `be-api-requirements/{티켓번호}-*.md` 에서 각 엔드포인트의 Request/Response 스키마 추출
+- `planning-materials/be-test-cases/{티켓번호}-*.md` 에서 테스트 케이스 목록 추출
+- `planning-materials/be-api-requirements/{티켓번호}-*.md` 에서 각 엔드포인트의 Request/Response 스키마 추출
 - 구현된 코드 구조 파악 (실제 존재하는 서비스/레포지토리/예외 클래스 확인)
 
 ### Step 2. 테스트 계획 수립
@@ -67,10 +67,10 @@ ls be-api-requirements/{티켓번호}-* 2>/dev/null
 ### Step 3. 테스트 코드 생성
 
 생성 순서:
-1. `be-project/tests/conftest.py` — 공통 fixtures (엔진, DB 세션, AsyncClient)
-2. `be-project/tests/api/v1/{domain}/test_{domain}.py` — 엔드포인트 통합 테스트
-3. `be-project/tests/repositories/test_{domain}_repository.py` — Repository DB I/O 테스트
-4. `be-project/tests/services/test_{domain}_service.py` — 서비스 단위 테스트 (Mock)
+1. `applications/be-project/tests/conftest.py` — 공통 fixtures (엔진, DB 세션, AsyncClient)
+2. `applications/be-project/tests/api/v1/{domain}/test_{domain}.py` — 엔드포인트 통합 테스트
+3. `applications/be-project/tests/repositories/test_{domain}_repository.py` — Repository DB I/O 테스트
+4. `applications/be-project/tests/services/test_{domain}_service.py` — 서비스 단위 테스트 (Mock)
 
 ---
 
@@ -155,3 +155,4 @@ ls be-api-requirements/{티켓번호}-* 2>/dev/null
 - `TestClient` (동기) 사용 금지 — 반드시 `httpx.AsyncClient` + `ASGITransport` 사용
 - `time.sleep()` 사용 금지
 - 예외 생성자에 정의되지 않은 파라미터 전달 금지
+- pytest.ini 를 이용하여 scope 와 loop_scope 를 관리하여도 실제 테스트 환경에서 적용이 되지 않는 버그가 있음. 꼭 fixture 와 pytest mark decorator 에 scope 와 loop_scope를 명시하여 event loop 을 관리할 것.

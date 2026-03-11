@@ -33,14 +33,14 @@
 
 ## 📤 산출물
 
-`tickets/` 디렉토리에 기능당 티켓 파일 1개씩 생성.
+`planning-materials/tickets/` 디렉토리에 기능당 티켓 파일 1개씩 생성.
 
 **파일명 형식**: `PLAN-{3자리 번호}-{feature-slug}.md`
 
-번호는 `tickets/`에 이미 존재하는 `PLAN-*` 파일 중 가장 큰 번호의 다음 번호부터 시작한다:
+번호는 `planning-materials/tickets/`에 이미 존재하는 `PLAN-*` 파일 중 가장 큰 번호의 다음 번호부터 시작한다:
 
 ```bash
-ls tickets/PLAN-* 2>/dev/null | sort
+ls planning-materials/tickets/PLAN-* 2>/dev/null | sort
 # PLAN-001, PLAN-002 존재 → 다음은 PLAN-003부터
 # PLAN-* 파일 없음 → PLAN-001부터 시작
 ```
@@ -48,7 +48,7 @@ ls tickets/PLAN-* 2>/dev/null | sort
 예시 산출물 (할일 관리 앱):
 
 ```
-tickets/
+planning-materials/tickets/
 ├── PLAN-001-user-auth.md
 ├── PLAN-002-todo-crud.md
 └── PLAN-003-category.md
@@ -114,7 +114,7 @@ tickets/
 
 **승인 후 즉시** 계획을 JSON 파일로 저장한다. 이 파일은 Phase 2에서 티켓 생성 시 참조한다.
 
-**파일 위치**: `tickets/.plan-{YYYYMMDD-HHmmss}.json`
+**파일 위치**: `planning-materials/tickets/.plan-{YYYYMMDD-HHmmss}.json`
 
 ```json
 {
@@ -145,7 +145,7 @@ tickets/
 저장 완료 후 사용자에게 아래 메시지를 출력한다:
 
 ```
-✅ Phase 1 완료: 계획이 tickets/.plan-{timestamp}.json 에 저장되었습니다.
+✅ Phase 1 완료: 계획이 planning-materials/tickets/.plan-{timestamp}.json 에 저장되었습니다.
 
 다음 단계를 진행하시겠습니까?
 - "yes" 입력 시 Phase 2 (티켓 파일 생성)을 자동으로 진행합니다.
@@ -158,10 +158,10 @@ tickets/
 
 #### Step 2-1. 계획 파일 읽기
 
-`tickets/` 디렉토리에서 가장 최근 `.plan-*.json` 파일을 찾아 읽는다.
+`planning-materials/tickets/` 디렉토리에서 가장 최근 `.plan-*.json` 파일을 찾아 읽는다.
 
 ```bash
-ls -t tickets/.plan-*.json | head -1
+ls -t planning-materials/tickets/.plan-*.json | head -1
 ```
 
 파일이 없으면 에러 메시지 출력 후 중단:
@@ -178,14 +178,14 @@ ls -t tickets/.plan-*.json | head -1
 
 각 배치 생성 시:
 1. 해당 배치의 티켓만 생성
-2. 진행 상황을 `tickets/.progress-{timestamp}.json`에 저장
+2. 진행 상황을 `planning-materials/tickets/.progress-{timestamp}.json`에 저장
 3. 사용자에게 진행 상황 알림
 4. 다음 배치 진행 여부 확인
 
 **진행 상황 파일 예시:**
 ```json
 {
-  "plan_file": "tickets/.plan-20260309-103000.json",
+  "plan_file": "planning-materials/tickets/.plan-20260309-103000.json",
   "total_tickets": 12,
   "completed_tickets": 5,
   "current_batch": 1,
@@ -195,7 +195,7 @@ ls -t tickets/.plan-*.json | head -1
 
 #### Step 2-3. 티켓 파일 생성
 
-승인 후 아래 템플릿으로 `tickets/` 에 파일을 생성한다.
+승인 후 아래 템플릿으로 `planning-materials/tickets/` 에 파일을 생성한다.
 
 ```markdown
 # {티켓번호}: {기능명}
@@ -241,8 +241,8 @@ ls -t tickets/.plan-*.json | head -1
 ```
 ✅ 배치 {N}/{총 배치 수} 완료 ({완료 티켓 수}/{총 티켓 수} 티켓)
 생성된 파일:
-- tickets/PLAN-001-user-auth.md
-- tickets/PLAN-002-todo-crud.md
+- planning-materials/tickets/PLAN-001-user-auth.md
+- planning-materials/tickets/PLAN-002-todo-crud.md
 ...
 
 다음 배치를 진행하시겠습니까? (yes/no)
@@ -266,7 +266,7 @@ ls -t tickets/.plan-*.json | head -1
 
 ## 📝 로그 작성 규칙 (절대 생략 불가)
 
-**파일 위치**: `logs/project-planner/{YYYYMMDD-HHmmss}-{프로젝트-슬러그}.md`
+**파일 위치**: `applications/logs/project-planner/{YYYYMMDD-HHmmss}-{프로젝트-슬러그}.md`
 
 로그 템플릿:
 
@@ -276,8 +276,8 @@ ls -t tickets/.plan-*.json | head -1
     - **일시**: {YYYY-MM-DD HH:mm:ss}
     - **사용자 입력**: {원문 그대로}
     - **생성 파일**:
-      - tickets/PLAN-001-{slug}.md
-      - tickets/PLAN-002-{slug}.md
+      - planning-materials/tickets/PLAN-001-{slug}.md
+      - planning-materials/tickets/PLAN-002-{slug}.md
       - (전체 파일 나열)
 
     ---

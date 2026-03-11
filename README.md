@@ -44,10 +44,10 @@ QA-FE Agent           — Vitest / Jest 테스트 스위트 작성
 
 | 에이전트 | 역할 | 입력 | 출력 |
 |---------|------|------|------|
-| `project-planner` | 프로젝트 분해 | 자연어 설명 | `tickets/PLAN-XXX-*.md` |
+| `project-planner` | 프로젝트 분해 | 자연어 설명 | `planning-materials/tickets/PLAN-XXX-*.md` |
 | `pm` | 요구사항 문서화 | 티켓 `.md` | API 명세서, UI 명세서, 와이어프레임 HTML, 테스트 케이스 |
-| `be-coding` | 백엔드 초벌 구현 | API 명세서 | FastAPI 라우터, 서비스, 레포지토리 |
-| `fe-coding` | 프론트엔드 초벌 구현 | UI 명세서 + 와이어프레임 + API 명세서 | Next.js 페이지, 컴포넌트, 훅 |
+| `be-coding` | 백엔드 초벌 구현 | API 명세서 | `applications/be-project/` 코드 |
+| `fe-coding` | 프론트엔드 초벌 구현 | UI 명세서 + 와이어프레임 + API 명세서 | `applications/fe-project/` 코드 |
 | `qa-be` | 백엔드 테스트 작성 | BE 테스트 케이스 + 구현 코드 | pytest 테스트 스위트 |
 | `qa-fe` | 프론트엔드 테스트 작성 | FE 테스트 케이스 + 구현 코드 | Vitest / Jest 테스트 스위트 |
 
@@ -56,51 +56,54 @@ QA-FE Agent           — Vitest / Jest 테스트 스위트 작성
 ## 프로젝트 구조
 
 ```
-Workspace/
-├── .agents/                        # 에이전트 지시 파일
-│   ├── project-planner/CLAUDE.md
-│   ├── pm/CLAUDE.md
-│   ├── be-coding/CLAUDE.md
-│   ├── fe-coding/CLAUDE.md
-│   ├── qa-be/CLAUDE.md
-│   └── qa-fe/CLAUDE.md
+프로젝트 루트/
+├── team/                           # 메인 작업 디렉토리
+│   ├── .agents/                    # 에이전트 지시 파일
+│   │   ├── project-planner/CLAUDE.md
+│   │   ├── pm/CLAUDE.md
+│   │   ├── be-coding/CLAUDE.md
+│   │   ├── fe-coding/CLAUDE.md
+│   │   ├── qa-be/CLAUDE.md
+│   │   └── qa-fe/CLAUDE.md
+│   │
+│   ├── .rules/                     # 코딩 규칙 (에이전트가 참조)
+│   │   ├── be-coding-rules.md
+│   │   └── fe-coding-rules.md
+│   │
+│   ├── .config/                    # 설정 파일
+│   │   └── git-workflow.json
+│   │
+│   ├── scripts/                    # 유틸리티 스크립트
+│   │   ├── run-agent.sh            # 에이전트 실행 래퍼
+│   │   ├── rate-limit-check.sh     # Claude Max Rate Limit 체크
+│   │   ├── parse_usage.py          # 사용량 추적
+│   │   ├── show-logs.sh            # 구현 로그 조회
+│   │   ├── git-branch-helper.sh    # Git 브랜치 관리
+│   │   └── create-dev-log.sh       # 개발 로그 생성
+│   │
+│   ├── planning-materials/         # PM 산출물
+│   │   ├── tickets/                # 티켓 파일 (Project Planner 산출물)
+│   │   │   └── PLAN-001-user-auth.md
+│   │   ├── be-api-requirements/    # API 명세서 (PM Agent 산출물)
+│   │   │   └── PLAN-001-user-auth.md
+│   │   ├── fe-ui-requirements/     # UI 명세서 및 와이어프레임
+│   │   │   ├── PLAN-001-login-ui-spec.md
+│   │   │   └── PLAN-001-login-wireframe.html
+│   │   ├── be-test-cases/          # BE 테스트 케이스
+│   │   │   └── PLAN-001-user-auth.md
+│   │   └── fe-test-cases/          # FE 테스트 케이스
+│   │       └── PLAN-001-user-auth.md
+│   │
+│   └── applications/               # 실제 애플리케이션 코드
+│       ├── be-project/             # FastAPI 백엔드
+│       ├── fe-project/             # Next.js 프론트엔드
+│       └── logs/                   # 구현 로그 (코딩 에이전트 산출물)
+│           ├── be-coding/
+│           ├── fe-coding/
+│           ├── qa-be/
+│           └── qa-fe/
 │
-├── .rules/                         # 코딩 규칙 (에이전트가 참조)
-│   ├── be-coding-rules.md
-│   └── fe-coding-rules.md
-│
-├── scripts/                        # 유틸리티 스크립트
-│   ├── run-agent.sh                # 에이전트 실행 래퍼
-│   ├── rate-limit-check.sh         # Claude Max Rate Limit 체크
-│   ├── parse_usage.py              # 사용량 추적
-│   └── show-logs.sh                # 구현 로그 조회
-│
-├── tickets/                        # 티켓 파일 (Project Planner 산출물)
-│   └── PLAN-001-user-auth.md
-│
-├── be-api-requirements/            # API 명세서 (PM Agent 산출물)
-│   └── PLAN-001-user-auth.md
-│
-├── fe-ui-requirements/             # UI 명세서 및 와이어프레임 (PM Agent 산출물)
-│   ├── PLAN-001-login-ui-spec.md
-│   └── PLAN-001-login-wireframe.html
-│
-├── be-test-cases/                  # BE 테스트 케이스 (PM Agent 산출물)
-│   └── PLAN-001-user-auth.md
-│
-├── fe-test-cases/                  # FE 테스트 케이스 (PM Agent 산출물)
-│   └── PLAN-001-user-auth.md
-│
-├── logs/                           # 구현 로그 (에이전트 산출물)
-│   ├── project-planner/
-│   ├── pm/
-│   ├── be-coding/
-│   ├── fe-coding/
-│   ├── qa-be/
-│   └── qa-fe/
-│
-├── be-project/                     # FastAPI 백엔드
-└── fe-project/                     # Next.js 프론트엔드
+└── logs-agent_dev/                 # 개발 로그 (루트 레벨)
 ```
 
 ---
@@ -120,20 +123,21 @@ Workspace/
 #### 1. Project Planner 실행
 
 ```bash
+cd team
 bash scripts/run-agent.sh project-planner --project "할일 관리 앱, 유저 인증/할일 CRUD/카테고리 기능 필요"
 ```
 
 **⚠️ 컨텍스트 윈도우 관리:**
 Project Planner는 작업을 **3개 Phase로 분할**하여 실행합니다:
 
-- **Phase 1**: 프로젝트 분석 → 기능 분해 → 계획 승인 → `tickets/.plan-{timestamp}.json` 저장
+- **Phase 1**: 프로젝트 분석 → 기능 분해 → 계획 승인 → `planning-materials/tickets/.plan-{timestamp}.json` 저장
 - **Phase 2**: 계획 파일을 읽어 티켓 파일 생성 (5개씩 배치로 분할)
 - **Phase 3**: 로그 작성
 
-에이전트가 기능 목록과 우선순위를 제시하고 승인을 요청합니다. 승인 후 `tickets/`에 티켓 파일이 생성됩니다.
+에이전트가 기능 목록과 우선순위를 제시하고 승인을 요청합니다. 승인 후 `planning-materials/tickets/`에 티켓 파일이 생성됩니다.
 
 ```
-tickets/
+planning-materials/tickets/
 ├── PLAN-001-user-auth.md
 ├── PLAN-002-todo-crud.md
 ├── PLAN-003-category.md
@@ -144,7 +148,7 @@ tickets/
 작업 중 컨텍스트 윈도우 초과로 중단된 경우:
 
 ```bash
-# Phase 2부터 재개 (계획 파일이 이미 존재하는 경우)
+cd team
 bash scripts/run-agent.sh project-planner --resume
 ```
 
@@ -158,28 +162,30 @@ bash scripts/run-agent.sh project-planner --resume
 
 #### 1. 티켓 파일 준비
 
-Jira 티켓 또는 직접 작성한 `.md` 파일을 `tickets/`에 배치합니다.
+Jira 티켓 또는 직접 작성한 `.md` 파일을 `team/planning-materials/tickets/`에 배치합니다.
 
 #### 2. PM Agent 실행
 
 ```bash
-bash scripts/run-agent.sh pm --ticket-file ./tickets/PLAN-001-user-auth.md
+cd team
+bash scripts/run-agent.sh pm --ticket-file ./planning-materials/tickets/PLAN-001-user-auth.md
 ```
 
 PM Agent는 파일을 생성하기 전에 산출물 목록과 주요 내용을 제시하고 승인을 요청합니다.
 
 **산출물 확인 및 검수:**
-- `be-api-requirements/PLAN-001-*.md` — API 명세서
-- `fe-ui-requirements/PLAN-001-*.md` — UI 명세서
-- `fe-ui-requirements/PLAN-001-*.html` — 와이어프레임 (브라우저에서 열어 인터랙션 확인)
-- `be-test-cases/PLAN-001-*.md` — BE 테스트 케이스
-- `fe-test-cases/PLAN-001-*.md` — FE 테스트 케이스
+- `planning-materials/be-api-requirements/PLAN-001-*.md` — API 명세서
+- `planning-materials/fe-ui-requirements/PLAN-001-*.md` — UI 명세서
+- `planning-materials/fe-ui-requirements/PLAN-001-*.html` — 와이어프레임 (브라우저에서 열어 인터랙션 확인)
+- `planning-materials/be-test-cases/PLAN-001-*.md` — BE 테스트 케이스
+- `planning-materials/fe-test-cases/PLAN-001-*.md` — FE 테스트 케이스
 
 다음 단계로 넘어가기 전에 필요한 부분을 수정합니다.
 
 #### 3. 코딩 에이전트 실행
 
 ```bash
+cd team
 bash scripts/run-agent.sh be-coding --ticket PLAN-001
 bash scripts/run-agent.sh fe-coding --ticket PLAN-001
 ```
@@ -189,6 +195,7 @@ bash scripts/run-agent.sh fe-coding --ticket PLAN-001
 #### 4. QA 에이전트 실행
 
 ```bash
+cd team
 bash scripts/run-agent.sh qa-be --ticket PLAN-001
 bash scripts/run-agent.sh qa-fe --ticket PLAN-001
 ```
@@ -196,6 +203,7 @@ bash scripts/run-agent.sh qa-fe --ticket PLAN-001
 #### 5. 로그 조회
 
 ```bash
+cd team
 bash scripts/show-logs.sh              # 전체 에이전트
 bash scripts/show-logs.sh be-coding    # 특정 에이전트만
 ```
@@ -263,6 +271,8 @@ FE Coding Agent는 이 와이어프레임을 참조하여 상태를 React `useSt
 ### 수동 브랜치 관리
 
 ```bash
+cd team
+
 # 브랜치 준비 (에이전트가 자동으로 실행)
 bash scripts/git-branch-helper.sh prepare be-coding PLAN-001 user-auth
 
@@ -276,6 +286,8 @@ bash scripts/git-branch-helper.sh config
 ### 일반적인 워크플로우
 
 ```bash
+cd team
+
 # 1. BE 코딩 에이전트 실행
 bash scripts/run-agent.sh be-coding --ticket PLAN-001
 # → 자동으로 feature/be/PLAN-001-user-auth 브랜치 생성/전환

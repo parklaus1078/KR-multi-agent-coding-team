@@ -36,11 +36,11 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 
 | 파일 | 예시 |
 |------|------|
-| `be-api-requirements/{티켓번호}-{slug}.md` | `be-api-requirements/PROJ-123-user-login.md` |
-| `fe-ui-requirements/{티켓번호}-{slug}.md` | `fe-ui-requirements/PROJ-123-user-login.md` |
-| `fe-ui-requirements/{티켓번호}-{slug}.html` | `fe-ui-requirements/PROJ-123-user-login.html` |
-| `be-test-cases/{티켓번호}-{slug}.md` | `be-test-cases/PROJ-123-user-login.md` |
-| `fe-test-cases/{티켓번호}-{slug}.md` | `fe-test-cases/PROJ-123-user-login.md` |
+| `planning-materials/be-api-requirements/{티켓번호}-{slug}.md` | `planning-materials/be-api-requirements/PROJ-123-user-login.md` |
+| `planning-materials/fe-ui-requirements/{티켓번호}-{slug}.md` | `planning-materials/fe-ui-requirements/PROJ-123-user-login.md` |
+| `planning-materials/fe-ui-requirements/{티켓번호}-{slug}.html` | `planning-materials/fe-ui-requirements/PROJ-123-user-login.html` |
+| `planning-materials/be-test-cases/{티켓번호}-{slug}.md` | `planning-materials/be-test-cases/PROJ-123-user-login.md` |
+| `planning-materials/fe-test-cases/{티켓번호}-{slug}.md` | `planning-materials/fe-test-cases/PROJ-123-user-login.md` |
 ```
 
 ---
@@ -68,11 +68,11 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 
 ```
 생성 예정 파일:
-- be-api-requirements/login.md
-- fe-ui-requirements/login.md
-- fe-ui-requirements/login.html
-- be-test-cases/login.md
-- fe-test-cases/login.md
+- planning-materials/be-api-requirements/login.md
+- planning-materials/fe-ui-requirements/login.md
+- planning-materials/fe-ui-requirements/login.html
+- planning-materials/be-test-cases/login.md
+- planning-materials/fe-test-cases/login.md
 
 주요 API: POST /auth/login, POST /auth/logout
 주요 화면: 로그인 폼, 메인 페이지 (로그인 성공 후)
@@ -83,7 +83,7 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 
 승인 후 아래 순서로 생성한다.
 
-**1. be-api-requirements/{feature}.md**
+**1. planning-materials/be-api-requirements/{feature}.md**
 
 아래 구조로 작성한다:
 
@@ -118,7 +118,7 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 | error.message | string | 이메일 또는 비밀번호가 올바르지 않습니다. |
 ```
 
-**2. fe-ui-requirements/{feature}.md**
+**2. planning-materials/fe-ui-requirements/{feature}.md**
 
 아래 구조로 작성한다:
 
@@ -155,7 +155,7 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 - API 호출 중 → 버튼 비활성화 + 로딩 표시
 ```
 
-**3. fe-ui-requirements/{feature}.html**
+**3. planning-materials/fe-ui-requirements/{feature}.html**
 
 아래 기준으로 정적 HTML 또는 인터랙션 포함 HTML을 결정한다:
 
@@ -224,7 +224,7 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 </html>
 ```
 
-**4. be-test-cases/{feature}.md**
+**4. planning-materials/be-test-cases/{feature}.md**
 
 ```markdown
 # {기능명} BE 테스트 케이스
@@ -245,7 +245,7 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 | TC-BE-005 | 비밀번호 8자 미만 | password: short | 400, VALIDATION_ERROR |
 ```
 
-**5. fe-test-cases/{feature}.md**
+**5. planning-materials/fe-test-cases/{feature}.md**
 
 ```markdown
 # {기능명} FE 테스트 케이스
@@ -277,7 +277,7 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 
 ## 📝 로그 작성 규칙 (절대 생략 불가)
 
-**파일 위치**: `logs/pm/{YYYYMMDD-HHmmss}-{기능명}.md`
+**파일 위치**: `applications/logs/pm/{YYYYMMDD-HHmmss}-{기능명}.md`
 
 로그 템플릿:
 
@@ -287,11 +287,11 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
     - **일시**: {YYYY-MM-DD HH:mm:ss}
     - **사용자 요청**: {원문 그대로}
     - **생성 파일**:
-      - be-api-requirements/{feature}.md
-      - fe-ui-requirements/{feature}.md
-      - fe-ui-requirements/{feature}.html
-      - be-test-cases/{feature}.md
-      - fe-test-cases/{feature}.md
+      - planning-materials/be-api-requirements/{feature}.md
+      - planning-materials/fe-ui-requirements/{feature}.md
+      - planning-materials/fe-ui-requirements/{feature}.html
+      - planning-materials/be-test-cases/{feature}.md
+      - planning-materials/fe-test-cases/{feature}.md
 
     ---
 

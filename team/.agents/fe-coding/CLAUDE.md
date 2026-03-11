@@ -50,11 +50,11 @@ bash scripts/git-branch-helper.sh prepare fe-coding PLAN-001 user-auth
 작업 시작 시 전달된 티켓 번호를 확인한다. (예: PROJ-123)
 **반드시 해당 티켓 번호가 prefix인 파일만 읽는다.**
 
-1. **API 명세서**: `be-api-requirements/{티켓번호}-*.md`
-2. **UI 요구사항**: `fe-ui-requirements/{티켓번호}-*.md`
-3. **UI 와이어프레임**: `fe-ui-requirements/{티켓번호}-*.html`
+1. **API 명세서**: `planning-materials/be-api-requirements/{티켓번호}-*.md`
+2. **UI 요구사항**: `planning-materials/fe-ui-requirements/{티켓번호}-*.md`
+3. **UI 와이어프레임**: `planning-materials/fe-ui-requirements/{티켓번호}-*.html`
 4. **코딩 룰**: `.rules/fe-coding-rules.md`
-5. **기존 코드 구조**: `fe-project/src/`
+5. **기존 코드 구조**: `applications/fe-project/src/`
 
 티켓 번호에 해당하는 파일이 없으면 작업을 중단하고 사용자에게 알린다.
 
@@ -66,8 +66,8 @@ bash scripts/git-branch-helper.sh prepare fe-coding PLAN-001 user-auth
 
 전달받은 티켓 번호로 관련 파일을 확인한다:
 ```bash
-ls be-api-requirements/{티켓번호}-* 2>/dev/null
-ls fe-ui-requirements/{티켓번호}-* 2>/dev/null
+ls planning-materials/be-api-requirements/{티켓번호}-* 2>/dev/null
+ls planning-materials/fe-ui-requirements/{티켓번호}-* 2>/dev/null
 ```
 
 - 파일이 존재하면 → Step 1로 진행
@@ -75,21 +75,21 @@ ls fe-ui-requirements/{티켓번호}-* 2>/dev/null
 ```
 ❌ {티켓번호}에 해당하는 요구사항 파일을 찾을 수 없습니다.
    PM Agent가 먼저 실행되었는지 확인해주세요.
-   bash scripts/run-agent.sh pm --ticket-file ./tickets/{티켓번호}.md
+   bash scripts/run-agent.sh pm --ticket-file ./planning-materials/tickets/{티켓번호}.md
 ```
 
 ### Step 1. 요구사항 파싱
 
-`fe-ui-requirements/`의 `.md` 파일 및 `.html` 파일에서 아래 항목을 추출한다:
+`planning-materials/fe-ui-requirements/`의 `.md` 파일 및 `.html` 파일에서 아래 항목을 추출한다:
 
 - 화면(페이지) 목록
 - 각 화면의 컴포넌트 구성
 - 사용자 인터랙션 (클릭, 폼 제출 등)
-- 연결된 API 엔드포인트 (`be-api-requirements/`와 매핑)
+- 연결된 API 엔드포인트 (`planning-materials/be-api-requirements/`와 매핑)
 
 ### Step 2. API 타입 추출
 
-`be-api-requirements/`에서 연결할 API의 Request/Response 스키마를 추출한다.
+`planning-materials/be-api-requirements/`에서 연결할 API의 Request/Response 스키마를 추출한다.
 타입 정의는 `.rules/fe-coding-rules.md` 섹션 4-3 패턴을 따른다.
 
 ### Step 3. 구현 계획 수립
@@ -166,17 +166,17 @@ ls fe-ui-requirements/{티켓번호}-* 2>/dev/null
 
 ## 📝 로그 작성 규칙 (절대 생략 불가)
 
-**파일 위치**: `logs/fe-coding/{YYYYMMDD-HHmmss}-{티켓 번호}-{기능명}.md`
+**파일 위치**: `applications/logs/fe-coding/{YYYYMMDD-HHmmss}-{티켓 번호}-{기능명}.md`
 ```markdown
 # 구현 로그: {기능명} UI
 
 - **에이전트**: FE Coding Agent
 - **티켓 번호**: {PROJ-123}
 - **일시**: {YYYY-MM-DD HH:mm:ss}
-- **참조 UI 기획안**: fe-ui-requirements/{티켓번호}-{파일명}.md
-- **참조 API 명세서**: be-api-requirements/{티켓번호}-{파일명}.md
+- **참조 UI 기획안**: planning-materials/fe-ui-requirements/{티켓번호}-{파일명}.md
+- **참조 API 명세서**: planning-materials/be-api-requirements/{티켓번호}-{파일명}.md
 - **생성/수정 파일**:
-  - `fe-project/src/...`
+  - `applications/fe-project/src/...`
   - (생성한 모든 파일 빠짐없이 나열)
 
 ---
