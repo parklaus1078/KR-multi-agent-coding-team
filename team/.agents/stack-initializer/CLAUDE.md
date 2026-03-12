@@ -49,7 +49,7 @@
 
 ### 필수 산출물 (항상 생성)
 
-1. **`.project-config.json`** - 프로젝트 설정 파일
+1. **`.project-meta.json`** - 프로젝트 설정 파일
 2. **코딩 룰** - `.rules/_cache/{project_type}/{framework}-{language}.md` 또는 `.rules/_verified/...`
 3. **PM 템플릿** - `.agents/pm/templates/{project_type}.md` (없으면 생성)
 4. **코딩 에이전트 템플릿** - `.agents/coding/templates/{project_type}.md` (없으면 생성)
@@ -66,10 +66,13 @@
 
 ### Step 0. 기존 설정 확인
 
-프로젝트 루트에 `.project-config.json` 파일이 이미 존재하는지 확인한다.
+현재 프로젝트에 `.project-meta.json` 파일이 이미 존재하는지 확인한다.
 
 ```bash
-ls .project-config.json 2>/dev/null
+cat .project-config.json
+# 현재 활성 프로젝트 확인
+
+ls projects/{current_project}/.project-meta.json 2>/dev/null
 ```
 
 **파일이 존재하는 경우:**
@@ -81,9 +84,9 @@ ls .project-config.json 2>/dev/null
 
 ---
 
-### Step 1. 프로젝트 설정 파일 생성
+### Step 1. 프로젝트 메타데이터 파일 생성
 
-전달받은 정보를 기반으로 `.project-config.json` 파일을 생성한다.
+전달받은 정보를 기반으로 `projects/{current_project}/.project-meta.json` 파일을 생성한다.
 
 **템플릿:**
 ```json
@@ -111,7 +114,7 @@ ls .project-config.json 2>/dev/null
 
 생성 후 사용자에게 확인:
 ```
-✅ 프로젝트 설정 파일 생성: .project-config.json
+✅ 프로젝트 설정 파일 생성: .project-meta.json
 
 프로젝트 타입: cli-tool
 언어: Go
@@ -535,14 +538,24 @@ projects/my-pipeline/src/
 
 ---
 
-### Step 7. .project-meta.json 업데이트
+### Step 7. .project-meta.json 생성
 
-프로젝트별 메타데이터 파일 업데이트:
+프로젝트별 메타데이터 파일 생성:
 
 **파일 위치**: `projects/{current_project}/.project-meta.json`
 
+**중요**: `.project-meta.schema.json` 파일을 먼저 읽어서 올바른 형식으로 생성한다.
+
+```bash
+# 스키마 확인
+cat .project-meta.schema.json
+```
+
+스키마의 `properties`와 `required` 필드를 참조하여 아래 형식으로 생성:
+
 ```json
 {
+  "$schema": "../../.project-meta.schema.json",
   "project_name": "file-search-cli",
   "project_type": "cli-tool",
   "stack": {
@@ -554,15 +567,20 @@ projects/my-pipeline/src/
   "project_description": "파일 검색 CLI 도구",
   "created_at": "2026-03-12T10:00:00Z",
   "stack_initialized_at": "2026-03-12T10:05:00Z",
-  "directory_structure": "cli-tool",
   "coding_rules_status": "auto-generated",
-  "coding_rules_path": ".rules/_cache/cli-tool/cobra-go.md",
-  "pm_template_path": ".agents/pm/templates/cli-tool.md",
-  "coding_template_path": ".agents/coding/templates/cli-tool.md",
-  "qa_template_path": ".agents/qa/templates/cli-tool.md",
-  "active": true
+  "git_workflow": {
+    "enabled": true,
+    "base_branch": "main",
+    "auto_create": true,
+    "auto_checkout": true
+  }
 }
 ```
+
+**필수 검증**:
+- `project_type`이 스키마의 enum 값 중 하나인지 확인
+- `stack` 구조가 해당 프로젝트 타입의 oneOf 스키마와 일치하는지 확인
+- 모든 required 필드가 포함되었는지 확인
 
 ---
 
@@ -587,7 +605,7 @@ projects/my-pipeline/src/
 ## 생성된 파일
 
 ### 설정
-- .project-config.json
+- .project-meta.json
 
 ### 코딩 룰
 - .rules/_cache/{project_type}/{framework}-{language}.md
@@ -644,7 +662,7 @@ projects/my-pipeline/src/
 ## 다음 단계
 
 1. 생성된 코딩 룰 검토: .rules/_cache/{project_type}/{framework}-{language}.md
-2. 프로젝트 설정 확인: .project-config.json
+2. 프로젝트 설정 확인: .project-meta.json
 3. 프로젝트 티켓 생성: bash scripts/run-agent.sh project-planner --project "{프로젝트 설명}"
 ```
 
@@ -691,7 +709,7 @@ projects/my-pipeline/src/
 
 ### 동일 프로젝트 재초기화
 
-`.project-config.json` 존재 시:
+`.project-meta.json` 존재 시:
 
 ```
 ⚠️ 기존 프로젝트 설정이 발견되었습니다.
@@ -729,7 +747,7 @@ projects/my-pipeline/src/
 
 - Rate Limit 체크 없이 작업 시작 금지
 - 로그 없이 작업 완료 처리 금지
-- 사용자 승인 없이 기존 `.project-config.json` 덮어쓰기 금지
+- 사용자 승인 없이 기존 `.project-meta.json` 덮어쓰기 금지
 - 공식 문서 없이 코딩 룰 생성 금지 (추측 금지)
 - WebSearch/WebFetch 실패 시 임의로 코딩 룰 작성 금지 → 사용자에게 알리고 수동 입력 요청
 - 프레임워크 버전이 명시되지 않은 경우 "latest"로 가정하되, 로그에 명시
@@ -754,7 +772,7 @@ projects/my-pipeline/src/
 ## 📋 작업 체크리스트
 
 - [ ] Rate Limit 체크 완료
-- [ ] 기존 `.project-config.json` 확인
+- [ ] 기존 `.project-meta.json` 확인
 - [ ] 프로젝트 설정 파일 생성/업데이트
 - [ ] 코딩 룰 생성 전략 결정 (verified > cache > new)
 - [ ] 공식 문서 및 베스트 프랙티스 수집 (WebSearch/WebFetch)
@@ -763,6 +781,6 @@ projects/my-pipeline/src/
 - [ ] 코딩 에이전트 템플릿 생성 (없으면)
 - [ ] QA 에이전트 템플릿 생성 (없으면)
 - [ ] 프로젝트 초기 구조 생성
-- [ ] `.project-config.json` 업데이트
+- [ ] `.project-config.json` 업데이트 (현재 활성 프로젝트 설정)
 - [ ] 로그 작성
 - [ ] 사용자 다음 단계 안내

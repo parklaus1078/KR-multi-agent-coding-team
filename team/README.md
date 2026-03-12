@@ -80,6 +80,7 @@ team/
 │
 ├── projects/                        # 프로젝트 작업 공간
 │   ├── project-a/                   # 각 프로젝트는 독립 Git 리포지토리
+│   │   ├── .project-meta.json       # ← 프로젝트 스택 세팅
 │   │   ├── .git/                    # ← 프로젝트 자체의 Git
 │   │   ├── planning/
 │   │   ├── src/

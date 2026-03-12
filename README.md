@@ -239,7 +239,7 @@ cd ../..
 
 | 에이전트 | 역할 | 입력 | 출력 |
 |---------|------|------|------|
-| `stack-initializer` | 스택 초기화 | `.project-config.json` | 코딩 룰, 프로젝트 구조 |
+| `stack-initializer` | 스택 초기화 | `.project-meta.json` | 코딩 룰, 프로젝트 구조 |
 | `project-planner` | 프로젝트 분해 | 자연어 설명 | `planning/tickets/PLAN-XXX-*.md` |
 | `pm` | 요구사항 문서화 | 티켓 `.md` | 명세서, 테스트 케이스 |
 | `coding` | 코드 구현 (모든 스택) | 명세서 | `src/` 코드 |
