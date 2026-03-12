@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "description": "Git workflow configuration for coding agents",
+
+  "branch_strategy": {
+    "enabled": true,
+    "base_branch": "dev",
+    "naming_convention": "feature/{ticket-number}",
+    "auto_create": true,
+    "auto_checkout": true,
+    "auto_commit": false,
+    "auto_push": false
+  },
+
+  "branch_naming": {
+    "prefix_by_agent": {
+      "be-coding": "feature/be",
+      "fe-coding": "feature/fe",
+      "qa-be": "test/be",
+      "qa-fe": "test/fe"
+    },
+    "examples": {
+      "be-coding": "feature/be/PLAN-001",
+      "fe-coding": "feature/fe/PLAN-001",
+      "qa-be": "test/be/PLAN-001",
+      "qa-fe": "test/fe/PLAN-001"
+    }
+  },
+
+  "commit_message_template": {
+    "format": "{type}({ticket}): {description}\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>",
+    "types": {
+      "be-coding": "feat",
+      "fe-coding": "feat",
+      "qa-be": "test",
+      "qa-fe": "test"
+    }
+  },
+
+  "safety": {
+    "check_uncommitted_changes": true,
+    "confirm_before_branch_switch": true,
+    "stash_before_checkout": true
+  },
+
+  "comments": {
+    "base_branch": "코딩 에이전트가 새 브랜치를 생성할 때 베이스로 사용할 브랜치",
+    "naming_convention": "{ticket-number}와 {slug}는 자동으로 치환됨",
+    "auto_create": "브랜치가 없으면 자동 생성 여부",
+    "auto_checkout": "브랜치를 자동으로 체크아웃할지 여부",
+    "auto_commit": "작업 완료 후 자동 커밋 여부 (false 권장 - 사람이 검토 후 커밋)",
+    "auto_push": "자동 푸시 여부 (false 권장 - 사람이 검토 후 푸시)"
+  }
+}

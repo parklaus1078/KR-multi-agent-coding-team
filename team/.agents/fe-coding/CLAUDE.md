@@ -7,13 +7,39 @@ UI 기획안과 API 명세서를 기반으로 `.rules/fe-coding-rules.md`의 규
 ---
 
 ## ⚡ 작업 시작 전 필수 체크 (절대 생략 불가)
-```
+
+### 1. Rate Limit 체크
+
+```bash
 ! bash scripts/rate-limit-check.sh fe-coding
 ```
 
 - **"✅ 여유 있음"** → 작업 진행
 - **"⚠️ 경고"** → 사용자에게 알리고, 동의 시 진행
 - **"🛑 중단"** → 즉시 작업 중단, 재개 가능 시간 안내 후 대기
+
+### 2. Git 브랜치 준비
+
+작업 전에 티켓 전용 브랜치를 준비한다. (`.config/git-workflow.json` 참조)
+
+```bash
+! bash scripts/git-branch-helper.sh prepare fe-coding {티켓번호} {slug}
+```
+
+**예시:**
+```bash
+bash scripts/git-branch-helper.sh prepare fe-coding PLAN-001 user-auth
+# → feature/fe/PLAN-001-user-auth 브랜치 생성/전환
+```
+
+**동작:**
+- 설정된 베이스 브랜치(기본: `dev`)에서 새 브랜치 생성
+- 이미 존재하는 브랜치면 해당 브랜치로 전환
+- 커밋되지 않은 변경사항이 있으면 자동으로 stash
+
+**스킵 조건:**
+- `.config/git-workflow.json`에서 `enabled: false`인 경우 스킵 가능
+- Git 저장소가 아닌 경우 스킵
 
 ---
 
@@ -24,11 +50,11 @@ UI 기획안과 API 명세서를 기반으로 `.rules/fe-coding-rules.md`의 규
 작업 시작 시 전달된 티켓 번호를 확인한다. (예: PROJ-123)
 **반드시 해당 티켓 번호가 prefix인 파일만 읽는다.**
 
-1. **API 명세서**: `be-api-requirements/{티켓번호}-*.md`
-2. **UI 요구사항**: `fe-ui-requirements/{티켓번호}-*.md`
-3. **UI 와이어프레임**: `fe-ui-requirements/{티켓번호}-*.html`
+1. **API 명세서**: `planning-materials/be-api-requirements/{티켓번호}-*.md`
+2. **UI 요구사항**: `planning-materials/fe-ui-requirements/{티켓번호}-*.md`
+3. **UI 와이어프레임**: `planning-materials/fe-ui-requirements/{티켓번호}-*.html`
 4. **코딩 룰**: `.rules/fe-coding-rules.md`
-5. **기존 코드 구조**: `fe-project/src/`
+5. **기존 코드 구조**: `applications/fe-project/src/`
 
 티켓 번호에 해당하는 파일이 없으면 작업을 중단하고 사용자에게 알린다.
 
@@ -40,8 +66,8 @@ UI 기획안과 API 명세서를 기반으로 `.rules/fe-coding-rules.md`의 규
 
 전달받은 티켓 번호로 관련 파일을 확인한다:
 ```bash
-ls be-api-requirements/{티켓번호}-* 2>/dev/null
-ls fe-ui-requirements/{티켓번호}-* 2>/dev/null
+ls planning-materials/be-api-requirements/{티켓번호}-* 2>/dev/null
+ls planning-materials/fe-ui-requirements/{티켓번호}-* 2>/dev/null
 ```
 
 - 파일이 존재하면 → Step 1로 진행
@@ -49,21 +75,21 @@ ls fe-ui-requirements/{티켓번호}-* 2>/dev/null
 ```
 ❌ {티켓번호}에 해당하는 요구사항 파일을 찾을 수 없습니다.
    PM Agent가 먼저 실행되었는지 확인해주세요.
-   bash scripts/run-agent.sh pm --ticket-file ./tickets/{티켓번호}.md
+   bash scripts/run-agent.sh pm --ticket-file ./planning-materials/tickets/{티켓번호}.md
 ```
 
 ### Step 1. 요구사항 파싱
 
-`fe-ui-requirements/`의 `.md` 파일 및 `.html` 파일에서 아래 항목을 추출한다:
+`planning-materials/fe-ui-requirements/`의 `.md` 파일 및 `.html` 파일에서 아래 항목을 추출한다:
 
 - 화면(페이지) 목록
 - 각 화면의 컴포넌트 구성
 - 사용자 인터랙션 (클릭, 폼 제출 등)
-- 연결된 API 엔드포인트 (`be-api-requirements/`와 매핑)
+- 연결된 API 엔드포인트 (`planning-materials/be-api-requirements/`와 매핑)
 
 ### Step 2. API 타입 추출
 
-`be-api-requirements/`에서 연결할 API의 Request/Response 스키마를 추출한다.
+`planning-materials/be-api-requirements/`에서 연결할 API의 Request/Response 스키마를 추출한다.
 타입 정의는 `.rules/fe-coding-rules.md` 섹션 4-3 패턴을 따른다.
 
 ### Step 3. 구현 계획 수립
@@ -109,23 +135,48 @@ ls fe-ui-requirements/{티켓번호}-* 2>/dev/null
    - metadata 또는 generateMetadata
 ```
 
-### Step 5. 로그 작성 (필수, 구현 완료 후 즉시)
+### Step 5. 작업 완료 후 안내
+
+코드 구현이 완료되면 사용자에게 다음 단계를 안내한다:
+
+```
+✅ 프론트엔드 코드 구현 완료
+
+📍 현재 브랜치: feature/fe/PLAN-001-user-auth
+📝 생성/수정된 파일: {N}개
+
+다음 단계:
+1. 코드 리뷰: 생성된 파일을 검토하세요.
+2. 로컬 테스트:
+   cd fe-project
+   npm run dev
+3. 커밋 생성:
+   git add .
+   git commit -m "feat(PLAN-001): 유저 인증 UI 구현"
+4. 푸시 (선택):
+   git push origin feature/fe/PLAN-001-user-auth
+
+브랜치 상태 확인:
+   bash scripts/git-branch-helper.sh status
+```
+
+### Step 6. 로그 작성 (필수, 구현 완료 후 즉시)
 
 ---
 
 ## 📝 로그 작성 규칙 (절대 생략 불가)
 
-**파일 위치**: `logs/fe-coding/{YYYYMMDD-HHmmss}-{티켓 번호}-{기능명}.md`
+**파일 위치**: `applications/logs/fe-coding/{YYYYMMDD-HHmmss}-{티켓 번호}-{기능명}.md`
 ```markdown
 # 구현 로그: {기능명} UI
 
 - **에이전트**: FE Coding Agent
 - **티켓 번호**: {PROJ-123}
 - **일시**: {YYYY-MM-DD HH:mm:ss}
-- **참조 UI 기획안**: fe-ui-requirements/{티켓번호}-{파일명}.md
-- **참조 API 명세서**: be-api-requirements/{티켓번호}-{파일명}.md
+- **참조 UI 기획안**: planning-materials/fe-ui-requirements/{티켓번호}-{파일명}.md
+- **참조 API 명세서**: planning-materials/be-api-requirements/{티켓번호}-{파일명}.md
 - **생성/수정 파일**:
-  - `fe-project/src/...`
+  - `applications/fe-project/src/...`
   - (생성한 모든 파일 빠짐없이 나열)
 
 ---

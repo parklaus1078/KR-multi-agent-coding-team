@@ -12,7 +12,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo " 에이전트 구현 로그"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-AGENTS=("pm" "be-coding" "qa-be" "fe-coding" "qa-fe")
+AGENTS=("project-planner" "pm" "be-coding" "qa-be" "fe-coding" "qa-fe")
 for agent in "${AGENTS[@]}"; do
     if [[ -n "$FILTER" && "$agent" != "$FILTER" ]]; then
         continue
