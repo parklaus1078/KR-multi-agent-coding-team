@@ -1,6 +1,6 @@
 # Frontend Coding Rules (Next.js / React)
 
-> 이 파일은 FE Coding Agent와 QA-FE Agent가 반드시 준수해야 하는 코딩 룰입니다.
+> 이 파일은 Coding Agent와 QA Agent가 web-fullstack 프로젝트의 프론트엔드를 작업할 때 반드시 준수해야 하는 코딩 룰입니다.
 
 ---
 

@@ -1,6 +1,6 @@
 # Backend Coding Rules (FastAPI / Python / PostgreSQL)
 
-> 이 파일은 BE Coding Agent와 QA-BE Agent가 반드시 준수해야 하는 코딩 룰입니다.
+> 이 파일은 Coding Agent와 QA Agent가 web-fullstack 프로젝트의 백엔드를 작업할 때 반드시 준수해야 하는 코딩 룰입니다.
 
 ---
 

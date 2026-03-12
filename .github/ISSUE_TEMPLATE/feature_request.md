@@ -26,13 +26,13 @@ assignees: ""
 
 ## 프로젝트의 어떤 부분에 영향을 주나요?
 
+- [ ] Project Planner 에이전트
 - [ ] PM 에이전트
-- [ ] BE Coding 에이전트
-- [ ] FE Coding 에이전트
-- [ ] QA-BE 에이전트
-- [ ] QA-FE 에이전트
+- [ ] Coding 에이전트
+- [ ] QA 에이전트
 - [ ] `scripts/`
 - [ ] `.rules/`
+- [ ] `.agents/`
 - [ ] 문서
 - [ ] 기타: 
 

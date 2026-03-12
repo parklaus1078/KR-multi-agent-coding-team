@@ -42,12 +42,34 @@ case "${1:-}" in
             exit 1
         fi
 
-        # 에이전트별 prefix 결정
+        # 에이전트별 prefix 결정 및 베이스 브랜치 설정
         case "$AGENT_NAME" in
-            be-coding) PREFIX="feature/be" ;;
-            fe-coding) PREFIX="feature/fe" ;;
-            qa-be)     PREFIX="test/be" ;;
-            qa-fe)     PREFIX="test/fe" ;;
+            # v0.0.2 통합 에이전트
+            coding)
+                PREFIX="feature"
+                # coding은 base_branch (main/dev)에서 분기
+                ;;
+            qa)
+                PREFIX="test"
+                # qa는 동일 티켓의 feature 브랜치에서 분기
+                FEATURE_BRANCH="feature/$TICKET_NUM"
+                if [[ -n "$SLUG" ]]; then
+                    FEATURE_BRANCH="feature/$TICKET_NUM-$SLUG"
+                fi
+                # feature 브랜치가 존재하는지 확인
+                if git show-ref --verify --quiet "refs/heads/$FEATURE_BRANCH"; then
+                    BASE_BRANCH="$FEATURE_BRANCH"
+                    echo "📌 QA는 feature 브랜치를 베이스로 생성됩니다: $FEATURE_BRANCH"
+                else
+                    echo "⚠️  feature 브랜치가 없습니다: $FEATURE_BRANCH"
+                    echo "   먼저 coding 에이전트를 실행하세요."
+                    echo "   또는 기본 베이스 브랜치를 사용합니다: $BASE_BRANCH"
+                fi
+                ;;
+            pm)
+                PREFIX="docs"
+                # pm은 base_branch에서 분기
+                ;;
             *)
                 echo "⚠️  알 수 없는 에이전트: $AGENT_NAME"
                 PREFIX="feature"
@@ -175,11 +197,11 @@ case "${1:-}" in
         echo "    → 현재 설정 확인"
         echo ""
         echo "예시:"
-        echo "  bash scripts/git-branch-helper.sh prepare be-coding PLAN-001 user-auth"
-        echo "  → feature/be/PLAN-001-user-auth 브랜치 생성/전환"
+        echo "  bash scripts/git-branch-helper.sh prepare coding PLAN-001 user-auth"
+        echo "  → feature/PLAN-001-user-auth 브랜치 생성/전환"
         echo ""
-        echo "  bash scripts/git-branch-helper.sh prepare fe-coding PLAN-001"
-        echo "  → feature/fe/PLAN-001 브랜치 생성/전환"
+        echo "  bash scripts/git-branch-helper.sh prepare qa PLAN-001"
+        echo "  → test/PLAN-001 브랜치 생성/전환"
         echo ""
         exit 1
         ;;

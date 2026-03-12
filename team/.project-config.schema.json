@@ -1,0 +1,198 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project Configuration Schema",
+  "description": "멀티 에이전트 시스템의 프로젝트 타입 및 스택 설정",
+  "type": "object",
+  "required": ["project_type", "stack", "created_at"],
+  "properties": {
+    "project_type": {
+      "type": "string",
+      "enum": [
+        "web-fullstack",
+        "web-mvc",
+        "cli-tool",
+        "desktop-app",
+        "mobile-app",
+        "library",
+        "data-pipeline"
+      ],
+      "description": "프로젝트 타입"
+    },
+    "stack": {
+      "type": "object",
+      "description": "사용할 기술 스택",
+      "oneOf": [
+        {
+          "properties": {
+            "type": { "const": "web-fullstack" },
+            "backend": {
+              "type": "object",
+              "required": ["language", "framework"],
+              "properties": {
+                "language": {
+                  "type": "string",
+                  "enum": ["python", "javascript", "typescript", "go", "rust", "java"]
+                },
+                "framework": {
+                  "type": "string",
+                  "examples": ["fastapi", "flask", "express", "nestjs", "gin", "axum", "spring-boot-webflux"]
+                },
+                "version": { "type": "string" },
+                "database": {
+                  "type": "string",
+                  "enum": ["postgresql", "mysql", "sqlite", "mongodb", "redis"]
+                }
+              }
+            },
+            "frontend": {
+              "type": "object",
+              "required": ["language", "framework"],
+              "properties": {
+                "language": {
+                  "type": "string",
+                  "enum": ["javascript", "typescript"]
+                },
+                "framework": {
+                  "type": "string",
+                  "examples": ["nextjs", "vite-react", "nuxt", "sveltekit", "remix"]
+                },
+                "version": { "type": "string" }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "web-mvc" },
+            "language": {
+              "type": "string",
+              "enum": ["python", "ruby", "java", "php", "csharp"]
+            },
+            "framework": {
+              "type": "string",
+              "examples": ["django", "rails", "spring-boot-mvc", "laravel", "aspnet-core-mvc"]
+            },
+            "version": { "type": "string" },
+            "database": {
+              "type": "string",
+              "enum": ["postgresql", "mysql", "sqlite", "mongodb"]
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "cli-tool" },
+            "language": {
+              "type": "string",
+              "enum": ["python", "go", "rust", "javascript", "typescript", "java"]
+            },
+            "framework": {
+              "type": "string",
+              "examples": ["click", "typer", "cobra", "clap", "commander", "picocli"]
+            },
+            "version": { "type": "string" }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "desktop-app" },
+            "platform": {
+              "type": "string",
+              "enum": ["cross-platform", "macos", "windows", "linux"]
+            },
+            "language": {
+              "type": "string",
+              "enum": ["javascript", "typescript", "rust", "swift", "csharp", "dart", "python", "cpp"]
+            },
+            "framework": {
+              "type": "string",
+              "examples": ["electron", "tauri", "flutter", "qt", "swiftui", "wpf", "winui3"]
+            },
+            "version": { "type": "string" }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "mobile-app" },
+            "platform": {
+              "type": "string",
+              "enum": ["cross-platform", "ios", "android"]
+            },
+            "language": {
+              "type": "string",
+              "enum": ["javascript", "typescript", "dart", "swift", "kotlin"]
+            },
+            "framework": {
+              "type": "string",
+              "examples": ["react-native", "expo", "flutter", "swiftui", "jetpack-compose"]
+            },
+            "version": { "type": "string" }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "library" },
+            "language": {
+              "type": "string",
+              "enum": ["javascript", "typescript", "python", "rust", "go", "java"]
+            },
+            "package_manager": {
+              "type": "string",
+              "examples": ["npm", "pip", "cargo", "go-mod", "maven", "gradle"]
+            },
+            "build_tool": {
+              "type": "string",
+              "examples": ["rollup", "tsup", "vite", "setuptools", "poetry", "cargo"]
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "data-pipeline" },
+            "language": {
+              "type": "string",
+              "enum": ["python", "scala", "sql"]
+            },
+            "framework": {
+              "type": "string",
+              "examples": ["airflow", "prefect", "spark", "dbt"]
+            },
+            "version": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "project_name": {
+      "type": "string",
+      "description": "프로젝트 이름"
+    },
+    "project_description": {
+      "type": "string",
+      "description": "프로젝트 설명"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "프로젝트 생성 시간"
+    },
+    "stack_initialized_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "스택 초기화 완료 시간"
+    },
+    "coding_rules_status": {
+      "type": "string",
+      "enum": ["auto-generated", "verified", "community"],
+      "description": "코딩 룰 상태"
+    },
+    "git_workflow": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "base_branch": { "type": "string", "default": "dev" },
+        "auto_create": { "type": "boolean", "default": true },
+        "auto_checkout": { "type": "boolean", "default": true }
+      }
+    }
+  }
+}

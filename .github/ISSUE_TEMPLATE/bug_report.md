@@ -8,11 +8,10 @@ assignees: ""
 
 ## 어떤 에이전트에 영향이 있나요?
 
+- [ ] `project-planner`
 - [ ] `pm`
-- [ ] `be-coding`
-- [ ] `fe-coding`
-- [ ] `qa-be`
-- [ ] `qa-fe`
+- [ ] `coding`
+- [ ] `qa`
 - [ ] `scripts/run-agent.sh`
 - [ ] `scripts/rate-limit-check.sh`
 - [ ] 기타: 
