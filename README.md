@@ -2,6 +2,8 @@
 
 Claude Code 기반의 멀티 에이전트 시스템으로, 프로젝트 아이디어에서 구현 및 테스트 완료까지의 개발 사이클을 자동화합니다.
 
+⚠️ 이 버전은 초기 개발 단계의 버전으로, FE(Next.js + Typescript) 와 BE(FastAPI + Python) 으로 구성된 Fullstack Web Application 개발 만을 지원합니다.
+
 ## 주의 사항
 
 현재 이 프로젝트는 베타 테스팅 단계입니다. 아래 사항에 대해서는 책임지지 않습니다.
