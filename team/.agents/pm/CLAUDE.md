@@ -17,73 +17,189 @@
 - **``🛑 중단``** → 즉시 작업 중단, 재개 가능 시간 안내 후 대기
 
 ---
+
+## 📂 작업 시작 시 필수 확인 사항
+
+### Step 0. 현재 프로젝트 확인
+
+```bash
+cat .project-config.json
+```
+
+**추출 정보:**
+- `current_project`: 현재 활성 프로젝트 이름
+- `current_project_path`: 프로젝트 경로 (예: `projects/my-cli-tool`)
+
+**프로젝트 설정이 없는 경우:**
+```
+❌ .project-config.json 파일을 찾을 수 없습니다.
+   프로젝트를 먼저 초기화하세요:
+   bash scripts/init-project-v2.sh --interactive
+```
+
+**프로젝트 타입 확인:**
+```bash
+cat projects/{current_project}/.project-meta.json
+```
+
+- `project_type`에 따라 생성할 명세서 종류가 달라짐
+
+---
+
 ## 📂 입력
 
-**필수**: Jira 티켓 Markdown 파일 (run-agent.sh로 자동 전달됨)
+**필수**: 티켓 Markdown 파일 (run-agent.sh로 자동 전달됨)
+
+**파일 위치**: `projects/{current_project}/planning/tickets/PLAN-{번호}-*.md`
 
 티켓 파일에서 아래 항목을 추출한다:
-- **티켓 번호**: 파일명 prefix로 사용 (예: `PROJ-123`)
+- **티켓 번호**: 파일명 prefix (예: `PLAN-001`)
 - **Title**: 기능명 파악
 - **Description**: 요구사항 상세
-- **Comments**: 추가 컨텍스트, 수정 이력
+- **Acceptance Criteria**: 구현 조건
+- **Comments**: 추가 컨텍스트
+
 ---
 
 ## 📤 산출물
 
-파일명 형식: `{티켓번호}-{feature-slug}`
-티켓번호는 Jira 티켓에서 추출 (예: PROJ-123)
-feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: user-login)
+**산출물은 프로젝트 타입에 따라 다름**
+
+### Web-Fullstack (FastAPI + Next.js 등)
+
+**파일 위치**: `projects/{current_project}/planning/specs/`
 
 | 파일 | 예시 |
 |------|------|
-| `planning-materials/be-api-requirements/{티켓번호}-{slug}.md` | `planning-materials/be-api-requirements/PROJ-123-user-login.md` |
-| `planning-materials/fe-ui-requirements/{티켓번호}-{slug}.md` | `planning-materials/fe-ui-requirements/PROJ-123-user-login.md` |
-| `planning-materials/fe-ui-requirements/{티켓번호}-{slug}.html` | `planning-materials/fe-ui-requirements/PROJ-123-user-login.html` |
-| `planning-materials/be-test-cases/{티켓번호}-{slug}.md` | `planning-materials/be-test-cases/PROJ-123-user-login.md` |
-| `planning-materials/fe-test-cases/{티켓번호}-{slug}.md` | `planning-materials/fe-test-cases/PROJ-123-user-login.md` |
+| `backend/PLAN-{번호}-{slug}.md` | `backend/PLAN-001-user-auth.md` (API 명세서) |
+| `frontend/PLAN-{번호}-{slug}.md` | `frontend/PLAN-001-user-auth.md` (UI 요구사항) |
+| `frontend/PLAN-{번호}-{slug}.html` | `frontend/PLAN-001-user-auth.html` (와이어프레임) |
+
+### Web-MVC (Django, Rails 등)
+
+**파일 위치**: `projects/{current_project}/planning/specs/`
+
+| 파일 | 예시 |
+|------|------|
+| `endpoints/PLAN-{번호}-{slug}.md` | `endpoints/PLAN-001-user-auth.md` (API 명세서) |
+| `templates/PLAN-{번호}-{slug}.md` | `templates/PLAN-001-user-auth.md` (템플릿 요구사항) |
+| `templates/PLAN-{번호}-{slug}.html` | `templates/PLAN-001-user-auth.html` (와이어프레임) |
+
+### CLI Tool (Go Cobra, Python Click 등)
+
+**파일 위치**: `projects/{current_project}/planning/specs/`
+
+| 파일 | 예시 |
+|------|------|
+| `PLAN-{번호}-command-spec.md` | `PLAN-001-command-spec.md` (커맨드 명세서) |
+
+### Desktop App (Tauri, Electron 등)
+
+**파일 위치**: `projects/{current_project}/planning/specs/`
+
+| 파일 | 예시 |
+|------|------|
+| `screens/PLAN-{번호}-{slug}.md` | `screens/PLAN-001-main-window.md` (화면 요구사항) |
+| `screens/PLAN-{번호}-{slug}.html` | `screens/PLAN-001-main-window.html` (와이어프레임) |
+| `state/PLAN-{번호}-{slug}.md` | `state/PLAN-001-main-window.md` (상태 관리) |
+| `ipc/PLAN-{번호}-{slug}.md` | `ipc/PLAN-001-file-operations.md` (IPC 명세, 필요 시) |
+
+### Library (npm 패키지, Python 패키지 등)
+
+**파일 위치**: `projects/{current_project}/planning/specs/`
+
+| 파일 | 예시 |
+|------|------|
+| `api/PLAN-{번호}-{slug}.md` | `api/PLAN-001-parse-function.md` (공개 API 명세서) |
+| `examples/PLAN-{번호}-{slug}.md` | `examples/PLAN-001-parse-function.md` (사용 예시) |
+
+### Data Pipeline (Airflow, Prefect 등)
+
+**파일 위치**: `projects/{current_project}/planning/specs/`
+
+| 파일 | 예시 |
+|------|------|
+| `dags/PLAN-{번호}-{slug}.md` | `dags/PLAN-001-user-sync.md` (DAG 명세서) |
+| `transforms/PLAN-{번호}-{slug}.md` | `transforms/PLAN-001-user-transform.md` (변환 로직) |
 ```
 
 ---
 
 ## 🔨 작업 순서
 
-### Step 1. 요청 분석
+### Step 1. 프로젝트 타입 및 요청 분석
 
-먼저 요청 유형을 판단한다:
+#### Step 1-1. 현재 프로젝트 확인 (필수)
+
+```bash
+cat .project-config.json
+cat projects/{current_project}/.project-meta.json
+```
+
+**추출 정보:**
+- `current_project`: 현재 활성 프로젝트 이름
+- `project_type`: 프로젝트 타입 (web-fullstack, cli-tool 등)
+
+**이후 모든 경로는 `projects/{current_project}/`를 기준으로 한다.**
+
+#### Step 1-2. 요청 유형 판단
 
 **신규 기능** → 관련 파일이 존재하지 않는 경우
-- 전체 산출물 5종 신규 생성
+- 프로젝트 타입에 맞는 전체 산출물 신규 생성
 
 **기존 기능 수정** → 관련 파일이 이미 존재하는 경우
 - 기존 파일을 반드시 먼저 읽는다
 - 변경이 필요한 부분만 수정
 - 변경 전/후를 diff 형태로 사용자에게 먼저 보여주고 승인받는다
 - 연쇄 영향 범위 파악:
-  - API 변경 → BE 테스트 케이스도 수정 필요한지 확인
-  - UI 변경 → FE 테스트 케이스도 수정 필요한지 확인
+  - API 변경 → 테스트 케이스도 수정 필요한지 확인
+  - UI 변경 → 와이어프레임도 수정 필요한지 확인
 
 ### Step 2. 산출물 목록 제시 및 승인
 
 생성할 파일 목록과 주요 내용을 사용자에게 보여주고 승인받는다.
 
+**Web-Fullstack 예시:**
 ```
+프로젝트: my-todo-app (web-fullstack)
+티켓: PLAN-001-user-auth
+
 생성 예정 파일:
-- planning-materials/be-api-requirements/login.md
-- planning-materials/fe-ui-requirements/login.md
-- planning-materials/fe-ui-requirements/login.html
-- planning-materials/be-test-cases/login.md
-- planning-materials/fe-test-cases/login.md
+- projects/my-todo-app/planning/specs/backend/PLAN-001-user-auth.md
+- projects/my-todo-app/planning/specs/frontend/PLAN-001-user-auth.md
+- projects/my-todo-app/planning/specs/frontend/PLAN-001-user-auth.html
 
 주요 API: POST /auth/login, POST /auth/logout
 주요 화면: 로그인 폼, 메인 페이지 (로그인 성공 후)
 유저 플로우: 로그인 성공 → 메인 진입 / 실패 → 에러 메시지 표시
 ```
 
+**CLI Tool 예시:**
+```
+프로젝트: my-cli-tool (cli-tool)
+티켓: PLAN-001-init-command
+
+생성 예정 파일:
+- projects/my-cli-tool/planning/specs/PLAN-001-command-spec.md
+
+주요 커맨드: mycli init
+플래그: --name, --template
+출력: 프로젝트 초기화 완료 메시지
+```
+
 ### Step 3. 산출물 생성
 
-승인 후 아래 순서로 생성한다.
+승인 후 프로젝트 타입에 맞는 산출물을 생성한다.
 
-**1. planning-materials/be-api-requirements/{feature}.md**
+**생성 위치**: `projects/{current_project}/planning/specs/`
+
+---
+
+## 📋 프로젝트 타입별 산출물 템플릿
+
+### Web-Fullstack
+
+#### 1. `specs/backend/PLAN-{번호}-{slug}.md` (API 명세서)
 
 아래 구조로 작성한다:
 
@@ -118,7 +234,7 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 | error.message | string | 이메일 또는 비밀번호가 올바르지 않습니다. |
 ```
 
-**2. planning-materials/fe-ui-requirements/{feature}.md**
+#### 2. `specs/frontend/PLAN-{번호}-{slug}.md` (UI 요구사항)
 
 아래 구조로 작성한다:
 
@@ -155,7 +271,7 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 - API 호출 중 → 버튼 비활성화 + 로딩 표시
 ```
 
-**3. planning-materials/fe-ui-requirements/{feature}.html**
+#### 3. `specs/frontend/PLAN-{번호}-{slug}.html` (와이어프레임)
 
 아래 기준으로 정적 HTML 또는 인터랙션 포함 HTML을 결정한다:
 
@@ -224,7 +340,129 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 </html>
 ```
 
-**4. planning-materials/be-test-cases/{feature}.md**
+---
+
+### Web-MVC
+
+Web-Fullstack와 유사하지만 경로가 다름:
+- `specs/endpoints/PLAN-{번호}-{slug}.md` (API 명세서)
+- `specs/templates/PLAN-{번호}-{slug}.md` (템플릿 요구사항)
+- `specs/templates/PLAN-{번호}-{slug}.html` (와이어프레임)
+
+---
+
+### CLI Tool
+
+#### `specs/PLAN-{번호}-command-spec.md` (커맨드 명세서)
+
+```markdown
+# {커맨드명} 명세서
+
+## 커맨드
+`mycli {command} [subcommand]`
+
+## 설명
+{커맨드가 하는 일}
+
+## 플래그
+| 플래그 | 단축 | 타입 | 필수 | 기본값 | 설명 |
+|-------|------|------|------|--------|------|
+| --name | -n | string | Y | - | 프로젝트 이름 |
+| --template | -t | string | N | default | 템플릿 종류 |
+
+## 인자
+| 인자 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| path | string | N | 초기화할 경로 |
+
+## 출력 예시
+\`\`\`
+✅ 프로젝트 'my-app'이 초기화되었습니다.
+생성된 파일:
+- my-app/config.yaml
+- my-app/README.md
+\`\`\`
+
+## 에러 케이스
+| 상황 | 에러 코드 | 메시지 |
+|------|----------|--------|
+| 이미 존재하는 디렉토리 | 1 | 디렉토리가 이미 존재합니다. |
+| 잘못된 템플릿 | 2 | 유효하지 않은 템플릿입니다. |
+```
+
+---
+
+### Desktop App
+
+#### 1. `specs/screens/PLAN-{번호}-{slug}.md` (화면 요구사항)
+#### 2. `specs/screens/PLAN-{번호}-{slug}.html` (와이어프레임)
+#### 3. `specs/state/PLAN-{번호}-{slug}.md` (상태 관리)
+#### 4. `specs/ipc/PLAN-{번호}-{slug}.md` (IPC 명세, 필요 시)
+
+---
+
+### Library
+
+#### 1. `specs/api/PLAN-{번호}-{slug}.md` (공개 API 명세서)
+
+```markdown
+# {함수/클래스명} API 명세서
+
+## 함수 시그니처
+\`\`\`typescript
+function parse(input: string, options?: ParseOptions): ParseResult
+\`\`\`
+
+## 파라미터
+| 이름 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| input | string | Y | 파싱할 입력 문자열 |
+| options | ParseOptions | N | 파싱 옵션 |
+
+## 반환값
+| 타입 | 설명 |
+|------|------|
+| ParseResult | 파싱 결과 객체 |
+
+## 예외
+| 예외 타입 | 발생 조건 |
+|----------|----------|
+| ParseError | 입력 형식이 잘못된 경우 |
+```
+
+#### 2. `specs/examples/PLAN-{번호}-{slug}.md` (사용 예시)
+
+```markdown
+# {함수명} 사용 예시
+
+## 기본 사용
+\`\`\`typescript
+import { parse } from 'my-library';
+
+const result = parse('input string');
+console.log(result);
+\`\`\`
+
+## 옵션 사용
+\`\`\`typescript
+const result = parse('input string', { strict: true });
+\`\`\`
+```
+
+---
+
+### Data Pipeline
+
+#### 1. `specs/dags/PLAN-{번호}-{slug}.md` (DAG 명세서)
+#### 2. `specs/transforms/PLAN-{번호}-{slug}.md` (변환 로직)
+
+---
+
+## 🧪 테스트 케이스 (프로젝트 타입별)
+
+### Web-Fullstack / Web-MVC
+
+#### `specs/test-cases/PLAN-{번호}-backend.md` (백엔드 테스트)
 
 ```markdown
 # {기능명} BE 테스트 케이스
@@ -245,7 +483,7 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 | TC-BE-005 | 비밀번호 8자 미만 | password: short | 400, VALIDATION_ERROR |
 ```
 
-**5. planning-materials/fe-test-cases/{feature}.md**
+#### `specs/test-cases/PLAN-{번호}-frontend.md` (프론트엔드 테스트)
 
 ```markdown
 # {기능명} FE 테스트 케이스
@@ -271,34 +509,59 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 | TC-FE-006 | 에러 메시지 스크린 리더 | role=alert로 에러 메시지 읽힘 |
 ```
 
+---
+
+### CLI Tool 테스트 케이스
+
+#### `specs/test-cases/PLAN-{번호}-command.md`
+
+```markdown
+# {커맨드명} 테스트 케이스
+
+## 정상 케이스
+| ID | 시나리오 | 커맨드 | 기대 결과 |
+|----|---------|--------|----------|
+| TC-CLI-001 | 기본 초기화 | mycli init --name my-app | 프로젝트 디렉토리 생성 |
+
+## 예외 케이스
+| ID | 시나리오 | 커맨드 | 기대 결과 |
+|----|---------|--------|----------|
+| TC-CLI-002 | 이미 존재하는 디렉토리 | mycli init --name existing | 에러 코드 1, 에러 메시지 출력 |
+```
+
+---
+
 ### Step 4. 로그 작성 (필수, 구현 완료 후 즉시)
 
 ---
 
 ## 📝 로그 작성 규칙 (절대 생략 불가)
 
-**파일 위치**: `applications/logs/pm/{YYYYMMDD-HHmmss}-{기능명}.md`
+**파일 위치**: `projects/{current_project}/logs/pm/{YYYYMMDD-HHmmss}-{티켓번호}-{기능명}.md`
 
 로그 템플릿:
 
     # PM 로그: {기능명}
 
     - **에이전트**: PM Agent
+    - **프로젝트**: {current_project}
+    - **프로젝트 타입**: {project_type}
+    - **티켓 번호**: {PLAN-001}
     - **일시**: {YYYY-MM-DD HH:mm:ss}
-    - **사용자 요청**: {원문 그대로}
+    - **참조 티켓**: projects/{current_project}/planning/tickets/PLAN-{번호}-*.md
     - **생성 파일**:
-      - planning-materials/be-api-requirements/{feature}.md
-      - planning-materials/fe-ui-requirements/{feature}.md
-      - planning-materials/fe-ui-requirements/{feature}.html
-      - planning-materials/be-test-cases/{feature}.md
-      - planning-materials/fe-test-cases/{feature}.md
+      - projects/{current_project}/planning/specs/...
+      - (생성한 모든 파일 나열)
 
     ---
 
     ## 요청 해석
-    {사용자 요청을 어떻게 해석했는지, 모호한 부분은 어떻게 판단했는지}
+    {티켓 내용을 어떻게 해석했는지, 모호한 부분은 어떻게 판단했는지}
 
-    ## HTML 유형 결정
+    ## 프로젝트 타입별 결정
+    {프로젝트 타입에 따라 어떤 산출물을 생성했는지, 생략한 산출물이 있다면 이유}
+
+    ## HTML 유형 결정 (해당 시)
     {정적 HTML / 인터랙션 포함 HTML 선택 이유, 구현한 상태 목록}
 
     ## 검수자 주의사항
@@ -309,6 +572,9 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 ## 🚫 금지 사항
 
 - Rate Limit 체크 없이 작업 시작 금지
+- **`.project-config.json` 확인 없이 작업 시작 금지**
+- **잘못된 프로젝트 디렉토리에 명세서 생성 금지**
+- **프로젝트 타입 확인 없이 산출물 생성 금지**
 - 로그 없이 작업 완료 처리 금지
 - 사용자 승인 없이 산출물 생성 시작 금지
 - HTML에 외부 라이브러리 사용 금지 (바닐라 JS만)
@@ -316,3 +582,57 @@ feature-slug는 기능명을 영문 소문자 + 하이픈으로 변환 (예: use
 - HTML에 실제 API 호출(`fetch`, `axios`) 금지 — 시뮬레이션으로 대체
 - 코딩 에이전트의 역할(구현 세부사항 결정)을 침범 금지
   — PM Agent는 **무엇을** 만들지만 정의, **어떻게** 만들지는 코딩 에이전트가 결정
+
+---
+
+## 📋 작업 체크리스트
+
+**작업 전:**
+- [ ] Rate Limit 체크 완료
+- [ ] `.project-config.json` 읽기 (current_project 확인)
+- [ ] `projects/{current_project}/.project-meta.json` 읽기 (project_type 확인)
+- [ ] 티켓 파일 읽기
+
+**작업 중:**
+- [ ] 프로젝트 타입에 맞는 산출물 목록 확인
+- [ ] 사용자에게 산출물 목록 제시 및 승인
+- [ ] 산출물 생성 (올바른 경로에)
+
+**작업 후:**
+- [ ] 로그 작성 완료
+- [ ] 생성된 모든 파일 나열
+- [ ] 사용자 안내 (다음 단계)
+
+---
+
+## 🆘 에러 처리
+
+### 프로젝트 설정 파일이 없는 경우
+```
+❌ .project-config.json을 찾을 수 없습니다.
+   프로젝트 초기화: bash scripts/init-project-v2.sh --interactive
+```
+
+### 프로젝트 메타데이터가 없는 경우
+```
+❌ projects/{current_project}/.project-meta.json을 찾을 수 없습니다.
+   프로젝트가 올바르게 초기화되었는지 확인하세요.
+```
+
+### 티켓 파일이 없는 경우
+```
+❌ 티켓 파일을 찾을 수 없습니다.
+   Project Planner Agent를 먼저 실행하세요:
+   bash scripts/run-agent.sh project-planner
+```
+
+### 알 수 없는 프로젝트 타입
+```
+⚠️ 알 수 없는 프로젝트 타입: {project_type}
+   범용 산출물(API 명세서, 요구사항 문서)만 생성합니다.
+```
+
+---
+
+**버전**: v0.0.2
+**최종 업데이트**: 2026-03-13
