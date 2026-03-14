@@ -1,5 +1,5 @@
 #!/bin/bash
-# 에이전트 구현 로그 조회 스크립트 v2.0
+# 에이전트 구현 로그 조회 스크립트 v0.0.2
 # 사용법:
 #   bash scripts/show-logs.sh              # 현재 프로젝트 전체 로그
 #   bash scripts/show-logs.sh coding       # 특정 에이전트만
@@ -12,7 +12,7 @@ FILTER="${1:-}"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo " 에이전트 구현 로그 (v2.0)"
+echo " 에이전트 구현 로그 (v0.0.2)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # ── 모든 프로젝트 모드 ──────────────────────────────────────────
@@ -99,7 +99,7 @@ if [[ ! -d "$LOGS_DIR" ]]; then
     exit 0
 fi
 
-# v2.0 에이전트 목록
+# v0.0.2 에이전트 목록
 AGENTS=("stack-initializer" "project-planner" "pm" "coding" "qa")
 
 for agent in "${AGENTS[@]}"; do

@@ -74,6 +74,8 @@ cat projects/{current_project}/.project-meta.json
 | `backend/PLAN-{번호}-{slug}.md` | `backend/PLAN-001-user-auth.md` (API 명세서) |
 | `frontend/PLAN-{번호}-{slug}.md` | `frontend/PLAN-001-user-auth.md` (UI 요구사항) |
 | `frontend/PLAN-{번호}-{slug}.html` | `frontend/PLAN-001-user-auth.html` (와이어프레임) |
+| `test-cases/PLAN-{번호}-backend.md` | `test-cases/PLAN-001-backend.md` (백엔드 테스트 케이스) |
+| `test-cases/PLAN-{번호}-frontend.md` | `test-cases/PLAN-001-frontend.md` (프론트엔드 테스트 케이스) |
 
 ### Web-MVC (Django, Rails 등)
 
@@ -84,6 +86,8 @@ cat projects/{current_project}/.project-meta.json
 | `endpoints/PLAN-{번호}-{slug}.md` | `endpoints/PLAN-001-user-auth.md` (API 명세서) |
 | `templates/PLAN-{번호}-{slug}.md` | `templates/PLAN-001-user-auth.md` (템플릿 요구사항) |
 | `templates/PLAN-{번호}-{slug}.html` | `templates/PLAN-001-user-auth.html` (와이어프레임) |
+| `test-cases/PLAN-{번호}-backend.md` | `test-cases/PLAN-001-backend.md` (백엔드 테스트 케이스) |
+| `test-cases/PLAN-{번호}-frontend.md` | `test-cases/PLAN-001-frontend.md` (프론트엔드 테스트 케이스) |
 
 ### CLI Tool (Go Cobra, Python Click 등)
 
@@ -92,6 +96,7 @@ cat projects/{current_project}/.project-meta.json
 | 파일 | 예시 |
 |------|------|
 | `PLAN-{번호}-command-spec.md` | `PLAN-001-command-spec.md` (커맨드 명세서) |
+| `test-cases/PLAN-{번호}-command.md` | `test-cases/PLAN-001-command.md` (커맨드 테스트 케이스) |
 
 ### Desktop App (Tauri, Electron 등)
 
@@ -103,6 +108,9 @@ cat projects/{current_project}/.project-meta.json
 | `screens/PLAN-{번호}-{slug}.html` | `screens/PLAN-001-main-window.html` (와이어프레임) |
 | `state/PLAN-{번호}-{slug}.md` | `state/PLAN-001-main-window.md` (상태 관리) |
 | `ipc/PLAN-{번호}-{slug}.md` | `ipc/PLAN-001-file-operations.md` (IPC 명세, 필요 시) |
+| `test-cases/PLAN-{번호}-unit.md` | `test-cases/PLAN-001-unit.md` (단위 테스트 케이스) |
+| `test-cases/PLAN-{번호}-integration.md` | `test-cases/PLAN-001-integration.md` (통합 테스트 케이스) |
+| `test-cases/PLAN-{번호}-e2e.md` | `test-cases/PLAN-001-e2e.md` (E2E 테스트 케이스) |
 
 ### Library (npm 패키지, Python 패키지 등)
 
@@ -112,6 +120,8 @@ cat projects/{current_project}/.project-meta.json
 |------|------|
 | `api/PLAN-{번호}-{slug}.md` | `api/PLAN-001-parse-function.md` (공개 API 명세서) |
 | `examples/PLAN-{번호}-{slug}.md` | `examples/PLAN-001-parse-function.md` (사용 예시) |
+| `test-cases/PLAN-{번호}-api.md` | `test-cases/PLAN-001-api.md` (API 테스트 케이스) |
+| `test-cases/PLAN-{번호}-examples.md` | `test-cases/PLAN-001-examples.md` (예시 검증 테스트) |
 
 ### Data Pipeline (Airflow, Prefect 등)
 
@@ -121,6 +131,8 @@ cat projects/{current_project}/.project-meta.json
 |------|------|
 | `dags/PLAN-{번호}-{slug}.md` | `dags/PLAN-001-user-sync.md` (DAG 명세서) |
 | `transforms/PLAN-{번호}-{slug}.md` | `transforms/PLAN-001-user-transform.md` (변환 로직) |
+| `test-cases/PLAN-{번호}-dag.md` | `test-cases/PLAN-001-dag.md` (DAG 테스트 케이스) |
+| `test-cases/PLAN-{번호}-transform.md` | `test-cases/PLAN-001-transform.md` (변환 로직 테스트 케이스) |
 ```
 
 ---
@@ -168,6 +180,8 @@ cat projects/{current_project}/.project-meta.json
 - projects/my-todo-app/planning/specs/backend/PLAN-001-user-auth.md
 - projects/my-todo-app/planning/specs/frontend/PLAN-001-user-auth.md
 - projects/my-todo-app/planning/specs/frontend/PLAN-001-user-auth.html
+- specs/test-cases/PLAN-{번호}-backend.md
+- specs/test-cases/PLAN-{번호}-frontend.md
 
 주요 API: POST /auth/login, POST /auth/logout
 주요 화면: 로그인 폼, 메인 페이지 (로그인 성공 후)
@@ -181,6 +195,7 @@ cat projects/{current_project}/.project-meta.json
 
 생성 예정 파일:
 - projects/my-cli-tool/planning/specs/PLAN-001-command-spec.md
+- specs/test-cases/PLAN-{번호}-command.md
 
 주요 커맨드: mycli init
 플래그: --name, --template
@@ -527,6 +542,162 @@ const result = parse('input string', { strict: true });
 | ID | 시나리오 | 커맨드 | 기대 결과 |
 |----|---------|--------|----------|
 | TC-CLI-002 | 이미 존재하는 디렉토리 | mycli init --name existing | 에러 코드 1, 에러 메시지 출력 |
+```
+
+---
+
+### Desktop App 테스트 케이스
+
+#### `specs/test-cases/PLAN-{번호}-unit.md` (단위 테스트)
+
+```markdown
+# {기능명} 단위 테스트 케이스
+
+## {컴포넌트/함수명}
+
+### 정상 케이스
+| ID | 시나리오 | 입력 | 기대 결과 |
+|----|---------|------|----------|
+| TC-UNIT-001 | 유효한 입력 처리 | {입력값} | {예상 출력} |
+
+### 예외 케이스
+| ID | 시나리오 | 입력 | 기대 결과 |
+|----|---------|------|----------|
+| TC-UNIT-002 | 잘못된 입력 처리 | {잘못된 입력} | {에러 처리} |
+```
+
+#### `specs/test-cases/PLAN-{번호}-integration.md` (통합 테스트)
+
+```markdown
+# {기능명} 통합 테스트 케이스
+
+## {플로우명}
+
+### 정상 케이스
+| ID | 시나리오 | 동작 | 기대 결과 |
+|----|---------|------|----------|
+| TC-INT-001 | 전체 플로우 성공 | {플로우 설명} | {최종 상태} |
+
+### 예외 케이스
+| ID | 시나리오 | 동작 | 기대 결과 |
+|----|---------|------|----------|
+| TC-INT-002 | 중간 단계 실패 | {실패 시나리오} | {복구 동작} |
+```
+
+#### `specs/test-cases/PLAN-{번호}-e2e.md` (E2E 테스트)
+
+```markdown
+# {기능명} E2E 테스트 케이스
+
+## 사용자 시나리오
+
+### 정상 케이스
+| ID | 시나리오 | 사용자 동작 | 기대 결과 |
+|----|---------|-----------|----------|
+| TC-E2E-001 | 메인 윈도우 열기 | 앱 실행 | 메인 윈도우 표시 |
+
+### 예외 케이스
+| ID | 시나리오 | 사용자 동작 | 기대 결과 |
+|----|---------|-----------|----------|
+| TC-E2E-002 | 네트워크 오류 처리 | 오프라인 상태에서 작업 | 오류 메시지 표시, 재시도 옵션 |
+```
+
+---
+
+### Library 테스트 케이스
+
+#### `specs/test-cases/PLAN-{번호}-api.md` (API 테스트)
+
+```markdown
+# {함수/클래스명} API 테스트 케이스
+
+## {함수명}
+
+### 정상 케이스
+| ID | 시나리오 | 입력 | 기대 반환값 |
+|----|---------|------|-----------|
+| TC-API-001 | 기본 사용 | parse("input") | ParseResult{...} |
+| TC-API-002 | 옵션 사용 | parse("input", {strict: true}) | ParseResult{...} |
+
+### 예외 케이스
+| ID | 시나리오 | 입력 | 기대 예외 |
+|----|---------|------|----------|
+| TC-API-003 | 빈 문자열 | parse("") | ParseError: "Empty input" |
+| TC-API-004 | null 입력 | parse(null) | TypeError |
+
+### 엣지 케이스
+| ID | 시나리오 | 입력 | 기대 결과 |
+|----|---------|------|----------|
+| TC-API-005 | 매우 긴 문자열 | parse("...10MB...") | 성능 저하 없이 처리 |
+| TC-API-006 | 특수 문자 포함 | parse("emoji 😀") | 올바르게 파싱 |
+```
+
+#### `specs/test-cases/PLAN-{번호}-examples.md` (예시 검증)
+
+```markdown
+# {함수명} 예시 코드 검증 테스트
+
+## 예시 코드 실행 테스트
+
+### README 예시
+| ID | 예시 | 기대 결과 |
+|----|------|----------|
+| TC-EX-001 | README의 기본 사용 예시 | 에러 없이 실행 |
+| TC-EX-002 | README의 고급 사용 예시 | 문서화된 결과와 일치 |
+
+### 문서 예시
+| ID | 예시 | 기대 결과 |
+|----|------|----------|
+| TC-EX-003 | 공식 문서의 모든 코드 스니펫 | 복사-붙여넣기로 실행 가능 |
+```
+
+---
+
+### Data Pipeline 테스트 케이스
+
+#### `specs/test-cases/PLAN-{번호}-dag.md` (DAG 테스트)
+
+```markdown
+# {DAG명} 테스트 케이스
+
+## DAG 구조 테스트
+
+### 정상 케이스
+| ID | 시나리오 | 조건 | 기대 결과 |
+|----|---------|------|----------|
+| TC-DAG-001 | DAG 로드 성공 | DAG 파일 유효 | Airflow에서 인식 |
+| TC-DAG-002 | 전체 DAG 실행 | 모든 태스크 성공 | 최종 상태: success |
+
+### 예외 케이스
+| ID | 시나리오 | 조건 | 기대 결과 |
+|----|---------|------|----------|
+| TC-DAG-003 | 중간 태스크 실패 | Task 2 실패 | 다운스트림 태스크 스킵, 알림 발송 |
+| TC-DAG-004 | 재시도 로직 | Task 일시적 실패 | 설정된 횟수만큼 재시도 |
+```
+
+#### `specs/test-cases/PLAN-{번호}-transform.md` (데이터 변환 테스트)
+
+```markdown
+# {변환 로직명} 테스트 케이스
+
+## 데이터 변환
+
+### 정상 케이스
+| ID | 시나리오 | 입력 데이터 | 기대 출력 |
+|----|---------|-----------|----------|
+| TC-TF-001 | 표준 포맷 변환 | {샘플 입력} | {샘플 출력} |
+| TC-TF-002 | 필드 매핑 | {원본 스키마} | {타겟 스키마} |
+
+### 예외 케이스
+| ID | 시나리오 | 입력 데이터 | 기대 결과 |
+|----|---------|-----------|----------|
+| TC-TF-003 | 필수 필드 누락 | {누락된 데이터} | ValidationError, 로그 기록 |
+| TC-TF-004 | 잘못된 데이터 타입 | {타입 불일치} | TypeError, 스킵 후 계속 |
+
+### 성능 케이스
+| ID | 시나리오 | 데이터 볼륨 | 기대 성능 |
+|----|---------|----------|----------|
+| TC-TF-005 | 대용량 처리 | 100만 레코드 | 5분 이내 완료 |
 ```
 
 ---

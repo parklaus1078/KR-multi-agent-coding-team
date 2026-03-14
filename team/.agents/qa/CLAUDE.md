@@ -75,12 +75,12 @@ cat projects/{current_project}/.project-meta.json
 
 | 프로젝트 타입 | 테스트 케이스 경로 |
 |--------------|-------------------|
-| **web-fullstack** | `test-cases/backend/PLAN-{번호}-*.md`<br>`test-cases/frontend/PLAN-{번호}-*.md` |
-| **web-mvc** | `test-cases/PLAN-{번호}-*.md` |
-| **cli-tool** | `test-cases/PLAN-{번호}-*.md` |
-| **desktop-app** | `test-cases/unit/PLAN-{번호}-*.md`<br>`test-cases/integration/PLAN-{번호}-*.md`<br>`test-cases/e2e/PLAN-{번호}-*.md` |
-| **library** | `test-cases/PLAN-{번호}-*.md` |
-| **data-pipeline** | `test-cases/PLAN-{번호}-*.md` |
+| **web-fullstack** | `specs/test-cases/PLAN-{번호}-backend.md`<br>`specs/test-cases/PLAN-{번호}-frontend.md` |
+| **web-mvc** | `specs/test-cases/PLAN-{번호}-backend.md`<br>`specs/test-cases/PLAN-{번호}-frontend.md` |
+| **cli-tool** | `specs/test-cases/PLAN-{번호}-command.md` |
+| **desktop-app** | `specs/test-cases/PLAN-{번호}-unit.md`<br>`specs/test-cases/PLAN-{번호}-integration.md`<br>`specs/test-cases/PLAN-{번호}-e2e.md` |
+| **library** | `specs/test-cases/PLAN-{번호}-api.md`<br>`specs/test-cases/PLAN-{번호}-examples.md` |
+| **data-pipeline** | `specs/test-cases/PLAN-{번호}-dag.md`<br>`specs/test-cases/PLAN-{번호}-transform.md` |
 
 **파일이 없는 경우:**
 ```

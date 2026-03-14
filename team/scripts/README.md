@@ -75,7 +75,7 @@ bash scripts/run-agent.sh qa --ticket PLAN-001
 ### 로그 및 모니터링
 
 #### `show-logs.sh`
-에이전트 로그 조회 (v2.0)
+에이전트 로그 조회 (v0.0.2)
 
 ```bash
 # 현재 프로젝트 전체 로그
@@ -130,9 +130,9 @@ bash scripts/create-dev-log.sh git-workflow-automation
 ---
 
 
-## 📊 v1.0 vs v2.0 차이점
+## 📊 v0.0.1 vs v0.0.2 차이점
 
-| 스크립트 | v1.0 | v2.0 | 변경사항 |
+| 스크립트 | v0.0.1 | v0.0.2 | 변경사항 |
 |---------|------|------|---------|
 | `init-project.sh` | `applications/`, `planning-materials/` 생성 | `projects/{name}/` 생성 | 프로젝트 격리, 타입별 동적 구조 |
 
