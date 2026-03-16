@@ -31,6 +31,7 @@ case "${1:-}" in
         AGENT_NAME="${2:-}"
         TICKET_NUM="${3:-}"
         SLUG="${4:-}"
+        PROJECT_PATH="${5:-}"
 
         if [[ "$ENABLED" != "true" ]]; then
             echo "ℹ️  Git 브랜치 자동 관리가 비활성화되어 있습니다."
@@ -38,8 +39,18 @@ case "${1:-}" in
         fi
 
         if [[ -z "$AGENT_NAME" || -z "$TICKET_NUM" ]]; then
-            echo "❌ 사용법: bash scripts/git-branch-helper.sh prepare <agent-name> <ticket-number> [slug]"
+            echo "❌ 사용법: bash scripts/git-branch-helper.sh prepare <agent-name> <ticket-number> [slug] [project-path]"
             exit 1
+        fi
+
+        # 프로젝트 디렉토리로 이동 (제공된 경우)
+        if [[ -n "$PROJECT_PATH" ]]; then
+            if [[ ! -d "$PROJECT_PATH" ]]; then
+                echo "❌ 프로젝트 디렉토리를 찾을 수 없습니다: $PROJECT_PATH"
+                exit 1
+            fi
+            echo "📂 프로젝트 디렉토리로 이동: $PROJECT_PATH"
+            cd "$PROJECT_PATH" || exit 1
         fi
 
         # 에이전트별 prefix 결정 및 베이스 브랜치 설정
@@ -65,10 +76,6 @@ case "${1:-}" in
                     echo "   먼저 coding 에이전트를 실행하세요."
                     echo "   또는 기본 베이스 브랜치를 사용합니다: $BASE_BRANCH"
                 fi
-                ;;
-            pm)
-                PREFIX="docs"
-                # pm은 base_branch에서 분기
                 ;;
             *)
                 echo "⚠️  알 수 없는 에이전트: $AGENT_NAME"
@@ -187,7 +194,7 @@ case "${1:-}" in
         echo "Git 브랜치 관리 헬퍼 스크립트"
         echo ""
         echo "사용법:"
-        echo "  bash scripts/git-branch-helper.sh prepare <agent-name> <ticket-number> [slug]"
+        echo "  bash scripts/git-branch-helper.sh prepare <agent-name> <ticket-number> [slug] [project-path]"
         echo "    → 작업 전 브랜치 준비 (생성 또는 전환)"
         echo ""
         echo "  bash scripts/git-branch-helper.sh status"
@@ -197,11 +204,11 @@ case "${1:-}" in
         echo "    → 현재 설정 확인"
         echo ""
         echo "예시:"
-        echo "  bash scripts/git-branch-helper.sh prepare coding PLAN-001 user-auth"
-        echo "  → feature/PLAN-001-user-auth 브랜치 생성/전환"
+        echo "  bash scripts/git-branch-helper.sh prepare coding PLAN-001 user-auth /path/to/project"
+        echo "  → /path/to/project에서 feature/PLAN-001-user-auth 브랜치 생성/전환"
         echo ""
         echo "  bash scripts/git-branch-helper.sh prepare qa PLAN-001"
-        echo "  → test/PLAN-001 브랜치 생성/전환"
+        echo "  → 현재 디렉토리에서 test/PLAN-001 브랜치 생성/전환"
         echo ""
         exit 1
         ;;

@@ -160,22 +160,22 @@ case "$AGENT_NAME" in
             exit 1
         fi
 
-        # Git 브랜치 자동 생성 (티켓 파일에서 티켓 번호와 slug 추출)
-        FILENAME=$(basename "$TICKET_FILE")
-        # PLAN-001-user-auth.md에서 PLAN-001 추출
-        TICKET_NUM=$(echo "$FILENAME" | grep -o '^PLAN-[0-9]*')
-        # user-auth 추출
-        SLUG=$(echo "$FILENAME" | sed "s/${TICKET_NUM}-//" | sed 's/\.md$//')
+        # # Git 브랜치 자동 생성 (티켓 파일에서 티켓 번호와 slug 추출)
+        # FILENAME=$(basename "$TICKET_FILE")
+        # # PLAN-001-user-auth.md에서 PLAN-001 추출
+        # TICKET_NUM=$(echo "$FILENAME" | grep -o '^PLAN-[0-9]*')
+        # # user-auth 추출
+        # SLUG=$(echo "$FILENAME" | sed "s/${TICKET_NUM}-//" | sed 's/\.md$//')
 
-        if [[ -n "$TICKET_NUM" ]] && [[ -n "$SLUG" ]]; then
-            echo "🌿 Git 브랜치 자동 생성 중..."
-            if bash "$SCRIPT_DIR/git-branch-helper.sh" prepare "pm" "$TICKET_NUM" "$SLUG" 2>/dev/null; then
-                echo "✅ 브랜치 준비 완료"
-            else
-                echo "⚠️  브랜치 생성 실패 (Git 설정 확인 필요, 작업은 계속됩니다)"
-            fi
-            echo ""
-        fi
+        # if [[ -n "$TICKET_NUM" ]] && [[ -n "$SLUG" ]]; then
+        #     echo "🌿 Git 브랜치 자동 생성 중..."
+        #     if bash "$SCRIPT_DIR/git-branch-helper.sh" prepare "pm" "$TICKET_NUM" "$SLUG" 2>/dev/null; then
+        #         echo "✅ 브랜치 준비 완료"
+        #     else
+        #         echo "⚠️  브랜치 생성 실패 (Git 설정 확인 필요, 작업은 계속됩니다)"
+        #     fi
+        #     echo ""
+        # fi
 
         INITIAL_PROMPT="$(cat "$TICKET_FILE")"
         ;;
@@ -186,21 +186,23 @@ case "$AGENT_NAME" in
             exit 1
         fi
 
-        # Git 브랜치 자동 생성 (티켓 파일에서 slug 추출)
+        # Git 브랜치 자동 생성 (티켓 파일이 있으면 slug 추출, 없으면 티켓 번호만 사용)
         TICKET_FILE_PATTERN="$PROJECT_PATH/planning/tickets/${TICKET_NUM}-*.md"
         TICKET_FILE_FOUND=$(ls $TICKET_FILE_PATTERN 2>/dev/null | head -1)
+        SLUG=""
 
         if [[ -n "$TICKET_FILE_FOUND" ]]; then
             # 파일명에서 slug 추출 (PLAN-001-user-auth.md → user-auth)
             FILENAME=$(basename "$TICKET_FILE_FOUND")
             SLUG=$(echo "$FILENAME" | sed "s/${TICKET_NUM}-//" | sed 's/\.md$//')
+        fi
 
-            echo "🌿 Git 브랜치 자동 생성 중..."
-            if bash "$SCRIPT_DIR/git-branch-helper.sh" prepare "$AGENT_NAME" "$TICKET_NUM" "$SLUG" 2>/dev/null; then
-                echo "✅ 브랜치 준비 완료"
-            else
-                echo "⚠️  브랜치 생성 실패 (Git 설정 확인 필요, 작업은 계속됩니다)"
-            fi
+        # slug가 있든 없든 브랜치 생성 시도
+        echo ""
+        if bash "$SCRIPT_DIR/git-branch-helper.sh" prepare "$AGENT_NAME" "$TICKET_NUM" "$SLUG" "$PROJECT_PATH"; then
+            echo ""
+        else
+            echo "⚠️  브랜치 생성 실패 (작업은 계속됩니다)"
             echo ""
         fi
 
