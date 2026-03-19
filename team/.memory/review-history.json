@@ -1,0 +1,43 @@
+{
+  "version": "0.0.1",
+  "updated": "2026-03-19",
+  "description": "PR 리뷰 히스토리 및 반복 이슈 추적",
+
+  "project": "multi-agent-coding-team",
+
+  "common_issues": [],
+
+  "approval_criteria": {
+    "min_coverage": 80,
+    "max_complexity": 10,
+    "max_function_length": 50,
+    "block_without_tests": true,
+    "min_coverage_delta": -5
+  },
+
+  "review_statistics": {
+    "total_reviews": 0,
+    "total_prs": 0,
+    "approval_rate": 0.0,
+    "avg_issues_per_pr": 0.0,
+    "auto_fix_success_rate": 0.0
+  },
+
+  "issue_frequency": {
+    "hardcoded_secret": 0,
+    "missing_tests": 0,
+    "function_too_long": 0,
+    "magic_number": 0,
+    "sql_injection": 0,
+    "xss": 0,
+    "todo_fixme": 0
+  },
+
+  "auto_fix_history": [],
+
+  "learning_notes": [
+    "초기 설정 - PR 리뷰 시작 전",
+    "반복되는 이슈는 common_issues에 자동 추가",
+    "프로젝트별 approval_criteria 조정 가능"
+  ]
+}

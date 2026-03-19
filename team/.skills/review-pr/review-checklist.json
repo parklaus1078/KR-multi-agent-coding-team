@@ -1,0 +1,231 @@
+{
+  "version": "0.0.1",
+  "updated": "2026-03-19",
+  "description": "PR 리뷰 체크리스트 - 항목별 자동 검사 규칙",
+
+  "completeness": {
+    "enabled": true,
+    "checks": {
+      "ticket_requirements": {
+        "enabled": true,
+        "severity": "error",
+        "description": "티켓 요구사항 모두 구현"
+      },
+      "no_todo_fixme": {
+        "enabled": true,
+        "severity": "warning",
+        "patterns": ["TODO", "FIXME", "HACK", "XXX"],
+        "description": "TODO/FIXME 주석 없음"
+      },
+      "error_handling": {
+        "enabled": true,
+        "severity": "error",
+        "description": "모든 함수에 에러 핸들링"
+      },
+      "tests_exist": {
+        "enabled": true,
+        "severity": "error",
+        "min_coverage": 0.80,
+        "description": "테스트 존재 및 커버리지 80% 이상"
+      }
+    }
+  },
+
+  "quality": {
+    "enabled": true,
+    "checks": {
+      "function_length": {
+        "enabled": true,
+        "severity": "warning",
+        "max_lines": 50,
+        "description": "함수 길이 50줄 이하"
+      },
+      "complexity": {
+        "enabled": true,
+        "severity": "warning",
+        "max_complexity": 10,
+        "description": "순환 복잡도 10 이하"
+      },
+      "duplicate_code": {
+        "enabled": true,
+        "severity": "warning",
+        "min_duplicate_lines": 6,
+        "description": "중복 코드 없음"
+      },
+      "naming": {
+        "enabled": true,
+        "severity": "warning",
+        "patterns": {
+          "camelCase": "^[a-z][a-zA-Z0-9]*$",
+          "PascalCase": "^[A-Z][a-zA-Z0-9]*$",
+          "CONSTANT": "^[A-Z][A-Z0-9_]*$"
+        },
+        "description": "명확한 네이밍"
+      },
+      "magic_numbers": {
+        "enabled": true,
+        "severity": "warning",
+        "allowed": [0, 1, -1],
+        "description": "매직 넘버 없음"
+      }
+    }
+  },
+
+  "security": {
+    "enabled": true,
+    "checks": {
+      "hardcoded_secrets": {
+        "enabled": true,
+        "severity": "error",
+        "patterns": [
+          "(password|passwd|pwd)\\s*=\\s*['\"]",
+          "(api_key|apikey|api-key)\\s*=\\s*['\"]",
+          "(secret|token)\\s*=\\s*['\"]",
+          "sk-[a-zA-Z0-9]{32,}",
+          "ghp_[a-zA-Z0-9]{36}"
+        ],
+        "description": "하드코딩된 비밀번호/API 키 없음"
+      },
+      "sql_injection": {
+        "enabled": true,
+        "severity": "error",
+        "patterns": [
+          "execute\\(.*\\+.*\\)",
+          "query\\(.*\\+.*\\)",
+          "SELECT.*\\+.*FROM"
+        ],
+        "description": "SQL Injection 방어"
+      },
+      "xss": {
+        "enabled": true,
+        "severity": "error",
+        "patterns": [
+          "innerHTML\\s*=",
+          "dangerouslySetInnerHTML",
+          "document.write\\("
+        ],
+        "description": "XSS 방어"
+      },
+      "input_validation": {
+        "enabled": true,
+        "severity": "warning",
+        "description": "사용자 입력 검증"
+      }
+    }
+  },
+
+  "style": {
+    "enabled": true,
+    "checks": {
+      "linter": {
+        "enabled": true,
+        "severity": "warning",
+        "tools": {
+          "javascript": "eslint",
+          "typescript": "eslint",
+          "python": "pylint",
+          "go": "golint"
+        },
+        "description": "Linter 통과"
+      },
+      "formatting": {
+        "enabled": true,
+        "severity": "warning",
+        "description": "일관된 포맷팅"
+      },
+      "commented_code": {
+        "enabled": true,
+        "severity": "warning",
+        "description": "주석 처리된 코드 없음"
+      }
+    }
+  },
+
+  "performance": {
+    "enabled": true,
+    "checks": {
+      "n_plus_one": {
+        "enabled": true,
+        "severity": "warning",
+        "patterns": [
+          "for.*\\n.*query\\(",
+          "for.*\\n.*find\\(",
+          "for.*\\n.*get\\("
+        ],
+        "description": "N+1 쿼리 없음"
+      },
+      "inefficient_loops": {
+        "enabled": true,
+        "severity": "warning",
+        "description": "비효율적 반복문 없음"
+      },
+      "async_usage": {
+        "enabled": true,
+        "severity": "info",
+        "description": "Async/await 적절히 사용"
+      }
+    }
+  },
+
+  "documentation": {
+    "enabled": true,
+    "checks": {
+      "docstrings": {
+        "enabled": true,
+        "severity": "warning",
+        "required_for": ["public_functions", "classes"],
+        "description": "공개 API에 docstring"
+      },
+      "changelog": {
+        "enabled": false,
+        "severity": "info",
+        "description": "CHANGELOG 업데이트"
+      },
+      "readme": {
+        "enabled": true,
+        "severity": "info",
+        "when": "api_changes",
+        "description": "README 업데이트 (API 변경 시)"
+      }
+    }
+  },
+
+  "pr_constraints": {
+    "max_lines_changed": 500,
+    "max_files_changed": 20,
+    "require_description": true,
+    "require_ticket_reference": true,
+    "block_without_tests": true,
+    "min_coverage_delta": -5
+  },
+
+  "auto_fix_rules": {
+    "enabled": true,
+    "rules": [
+      {
+        "id": "replace_hardcoded_secrets",
+        "pattern": "(password|api_key|secret)\\s*=\\s*['\"]([^'\"]+)['\"]",
+        "replacement": "$1 = process.env.$1.toUpperCase()",
+        "description": "하드코딩 비밀번호 → 환경 변수"
+      },
+      {
+        "id": "sort_imports",
+        "pattern": "import",
+        "action": "sort_alphabetically",
+        "description": "Import 알파벳 순 정렬"
+      },
+      {
+        "id": "remove_trailing_spaces",
+        "pattern": "\\s+$",
+        "replacement": "",
+        "description": "불필요한 공백 제거"
+      },
+      {
+        "id": "remove_commented_code",
+        "pattern": "^\\s*//.*\\w+.*=.*$",
+        "replacement": "",
+        "description": "주석 처리된 코드 삭제"
+      }
+    ]
+  }
+}

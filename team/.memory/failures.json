@@ -1,0 +1,41 @@
+{
+  "version": "0.0.1",
+  "updated": "2026-03-19",
+  "description": "카탈로그화된 실패 사례 - 발생한 문제와 해결 방법 기록",
+
+  "failures": [],
+
+  "failure_template": {
+    "id": "failure_XXX",
+    "ticket": "PLAN-XXX",
+    "agent": "pm | coding | qa",
+    "timestamp": "2026-03-19T10:30:00Z",
+    "symptom": "관찰된 증상 (무엇이 잘못되었나)",
+    "root_cause": "근본 원인 (왜 발생했나)",
+    "detection_method": "수동 리뷰 | 테스트 실패 | 검증 Skill | 사용자 피드백",
+    "impact": "low | medium | high",
+    "fix_applied": "적용한 해결책",
+    "gotcha_created": "gotchas.md#XX (해당 시)",
+    "prevented_count": 0,
+    "related_tickets": [],
+    "notes": "추가 메모"
+  },
+
+  "statistics": {
+    "total_failures": 0,
+    "by_agent": {
+      "pm": 0,
+      "coding": 0,
+      "qa": 0,
+      "project-planner": 0
+    },
+    "by_impact": {
+      "low": 0,
+      "medium": 0,
+      "high": 0
+    },
+    "resolved_count": 0,
+    "recurring_failures": 0,
+    "last_failure_date": null
+  }
+}

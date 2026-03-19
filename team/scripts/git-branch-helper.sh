@@ -61,20 +61,25 @@ case "${1:-}" in
                 # coding은 base_branch (main/dev)에서 분기
                 ;;
             qa)
-                PREFIX="test"
-                # qa는 동일 티켓의 feature 브랜치에서 분기
+                # qa는 feature 브랜치를 그대로 사용 (새 브랜치 생성 안 함)
                 FEATURE_BRANCH="feature/$TICKET_NUM"
                 if [[ -n "$SLUG" ]]; then
                     FEATURE_BRANCH="feature/$TICKET_NUM-$SLUG"
                 fi
                 # feature 브랜치가 존재하는지 확인
                 if git show-ref --verify --quiet "refs/heads/$FEATURE_BRANCH"; then
-                    BASE_BRANCH="$FEATURE_BRANCH"
-                    echo "📌 QA는 feature 브랜치를 베이스로 생성됩니다: $FEATURE_BRANCH"
+                    echo "📌 QA는 기존 feature 브랜치에서 작업합니다: $FEATURE_BRANCH"
+                    # feature 브랜치로 checkout만 하고 새 브랜치는 생성하지 않음
+                    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+                    if [[ "$CURRENT_BRANCH" != "$FEATURE_BRANCH" ]]; then
+                        git checkout "$FEATURE_BRANCH"
+                    fi
+                    echo "✅ 브랜치 준비 완료: $FEATURE_BRANCH"
+                    exit 0
                 else
-                    echo "⚠️  feature 브랜치가 없습니다: $FEATURE_BRANCH"
+                    echo "❌ feature 브랜치가 없습니다: $FEATURE_BRANCH"
                     echo "   먼저 coding 에이전트를 실행하세요."
-                    echo "   또는 기본 베이스 브랜치를 사용합니다: $BASE_BRANCH"
+                    exit 1
                 fi
                 ;;
             *)

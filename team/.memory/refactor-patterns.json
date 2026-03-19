@@ -1,0 +1,83 @@
+{
+  "version": "0.0.1",
+  "updated": "2026-03-19",
+  "description": "프로젝트별 리팩토링 패턴 및 코드 스멜 학습 데이터",
+
+  "project": "multi-agent-coding-team",
+
+  "applied_patterns": [],
+
+  "common_smells": [
+    {
+      "smell": "long_method",
+      "threshold": 50,
+      "frequency": 0,
+      "avg_length": 0,
+      "description": "함수 길이 > 50줄"
+    },
+    {
+      "smell": "duplicate_code",
+      "threshold": 6,
+      "frequency": 0,
+      "description": "6줄 이상 중복"
+    },
+    {
+      "smell": "magic_number",
+      "threshold": 2,
+      "frequency": 0,
+      "description": "2자리 이상 숫자 리터럴"
+    },
+    {
+      "smell": "god_object",
+      "threshold_lines": 300,
+      "threshold_methods": 20,
+      "frequency": 0,
+      "description": "클래스 > 300줄 또는 메서드 > 20개"
+    },
+    {
+      "smell": "n_plus_one",
+      "frequency": 0,
+      "description": "루프 내 쿼리"
+    }
+  ],
+
+  "refactoring_patterns": {
+    "extract_function": {
+      "count": 0,
+      "avg_complexity_reduction": 0,
+      "success_rate": 0.0
+    },
+    "replace_conditional": {
+      "count": 0,
+      "avg_complexity_reduction": 0,
+      "success_rate": 0.0
+    },
+    "simplify_conditional": {
+      "count": 0,
+      "avg_complexity_reduction": 0,
+      "success_rate": 0.0
+    },
+    "replace_loop_with_pipeline": {
+      "count": 0,
+      "avg_performance_gain": 0,
+      "success_rate": 0.0
+    }
+  },
+
+  "metrics": {
+    "total_files_analyzed": 0,
+    "total_issues_found": 0,
+    "total_auto_fixed": 0,
+    "avg_complexity_before": 0.0,
+    "avg_complexity_after": 0.0,
+    "improvement_percentage": 0.0
+  },
+
+  "auto_fix_history": [],
+
+  "learning_notes": [
+    "초기 설정 - 분석 시작 전",
+    "프로젝트별 임계값 조정 필요 시 common_smells 수정",
+    "주기적으로 metrics 업데이트하여 개선 추적"
+  ]
+}

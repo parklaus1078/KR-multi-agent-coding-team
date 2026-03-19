@@ -1,0 +1,233 @@
+{
+  "version": "0.0.1",
+  "updated": "2026-03-19",
+  "description": "명세서 검증 규칙 - PM Agent 출력물의 품질을 자동으로 검사",
+
+  "rules": {
+    "completeness": {
+      "enabled": true,
+      "severity": "error",
+      "description": "필수 파일 및 섹션 존재 여부 확인",
+      "checks": {
+        "files": true,
+        "sections": true,
+        "api_responses": true
+      }
+    },
+
+    "scope_compliance": {
+      "enabled": true,
+      "severity": "error",
+      "description": "티켓 범위 준수 확인 (Gotcha #1)",
+      "strict_mode": false,
+      "allow_out_of_scope": true,
+      "scope_creep_keywords": [
+        "OAuth", "소셜 로그인", "이메일 인증",
+        "비밀번호 재설정", "2단계 인증", "2FA",
+        "관리자", "admin", "dashboard",
+        "통계", "analytics", "리포트", "report",
+        "알림", "notification", "푸시"
+      ]
+    },
+
+    "quality_gates": {
+      "rest_conventions": {
+        "enabled": true,
+        "severity": "warning",
+        "description": "REST API 규약 준수 확인",
+        "conventions": {
+          "POST": "생성",
+          "GET": "조회",
+          "PUT": "전체 수정",
+          "PATCH": "부분 수정",
+          "DELETE": "삭제"
+        }
+      },
+
+      "error_responses": {
+        "enabled": true,
+        "severity": "error",
+        "description": "API 에러 응답 문서화 확인 (Gotcha #8)",
+        "required_codes": ["400", "401", "500"],
+        "optional_codes": ["403", "404", "409"]
+      },
+
+      "html_libraries": {
+        "enabled": true,
+        "severity": "error",
+        "description": "HTML 외부 라이브러리 사용 금지 (Gotcha #4)",
+        "forbidden_patterns": [
+          "tailwind",
+          "react",
+          "vue",
+          "bootstrap",
+          "jquery",
+          "cdn",
+          "jsdelivr",
+          "unpkg",
+          "import.*from",
+          "require\\("
+        ]
+      },
+
+      "html_api_calls": {
+        "enabled": true,
+        "severity": "error",
+        "description": "HTML에 실제 API 호출 금지 (Gotcha #5)",
+        "forbidden_patterns": [
+          "fetch\\(",
+          "axios\\.",
+          "XMLHttpRequest",
+          "\\.get\\(",
+          "\\.post\\(",
+          "\\.put\\(",
+          "\\.delete\\("
+        ]
+      },
+
+      "accessibility": {
+        "enabled": true,
+        "severity": "warning",
+        "description": "접근성 테스트 케이스 포함 확인 (Gotcha #9)",
+        "applies_to": ["web-fullstack", "web-mvc", "desktop-app"],
+        "keywords": [
+          "접근성",
+          "accessibility",
+          "키보드",
+          "keyboard",
+          "스크린 리더",
+          "screen reader",
+          "role=",
+          "aria-"
+        ]
+      },
+
+      "cli_exit_codes": {
+        "enabled": true,
+        "severity": "error",
+        "description": "CLI Tool의 Exit Code 정의 필수",
+        "applies_to": ["cli-tool"],
+        "keywords": ["exit code", "종료 코드", "exit status"]
+      }
+    },
+
+    "implementation_details": {
+      "enabled": true,
+      "severity": "warning",
+      "description": "구현 세부사항 침범 방지 (Gotcha #10)",
+      "forbidden_keywords": [
+        "bcrypt",
+        "jwt",
+        "jose",
+        "passport",
+        "axios",
+        "fetch",
+        "request",
+        "mongoose",
+        "sequelize",
+        "typeorm",
+        "prisma",
+        "src/",
+        "lib/",
+        "utils/",
+        "helpers/",
+        "controllers/",
+        "services/",
+        "models/",
+        "VARCHAR",
+        "INTEGER",
+        "TIMESTAMP",
+        "PRIMARY KEY",
+        "FOREIGN KEY",
+        "INDEX",
+        "Singleton",
+        "Factory",
+        "Observer",
+        "Repository Pattern",
+        "MVC"
+      ]
+    }
+  },
+
+  "auto_fix": {
+    "enabled": true,
+    "description": "경미한 이슈 자동 수정",
+    "rules": [
+      {
+        "id": "add_out_of_scope_section",
+        "enabled": true,
+        "description": "Out-of-Scope 섹션 누락 시 자동 추가"
+      },
+      {
+        "id": "replace_hardcoded_secrets",
+        "enabled": true,
+        "description": "하드코딩된 비밀번호 → 환경 변수 참조",
+        "patterns": [
+          {"find": "\"password\": \"[^\"]+\"", "replace": "\"password\": \"${PASSWORD}\""},
+          {"find": "\"api_key\": \"[^\"]+\"", "replace": "\"api_key\": \"${API_KEY}\""},
+          {"find": "\"secret\": \"[^\"]+\"", "replace": "\"secret\": \"${SECRET}\""}
+        ]
+      },
+      {
+        "id": "http_to_https",
+        "enabled": true,
+        "description": "HTTP → HTTPS 자동 변환",
+        "pattern": {"find": "http://", "replace": "https://"}
+      }
+    ]
+  },
+
+  "project_type_requirements": {
+    "web-fullstack": {
+      "required_files": [
+        "specs/backend/PLAN-{number}-{slug}.md",
+        "specs/frontend/PLAN-{number}-{slug}.md",
+        "specs/frontend/PLAN-{number}-{slug}.html",
+        "specs/test-cases/PLAN-{number}-backend.md",
+        "specs/test-cases/PLAN-{number}-frontend.md"
+      ],
+      "required_sections": {
+        "backend": ["엔드포인트 목록", "Request Body", "Response 200"],
+        "frontend": ["화면 목록", "유저 플로우", "컴포넌트 구성"]
+      }
+    },
+
+    "cli-tool": {
+      "required_files": [
+        "specs/PLAN-{number}-command-spec.md",
+        "specs/test-cases/PLAN-{number}-command.md"
+      ],
+      "required_sections": {
+        "command-spec": ["커맨드", "플래그", "출력 예시", "에러 케이스", "종료 코드"]
+      }
+    },
+
+    "desktop-app": {
+      "required_files": [
+        "specs/screens/PLAN-{number}-{slug}.md",
+        "specs/screens/PLAN-{number}-{slug}.html",
+        "specs/state/PLAN-{number}-{slug}.md",
+        "specs/test-cases/PLAN-{number}-unit.md",
+        "specs/test-cases/PLAN-{number}-integration.md",
+        "specs/test-cases/PLAN-{number}-e2e.md"
+      ],
+      "required_sections": {
+        "screens": ["화면 정보", "레이아웃 구성", "컴포넌트 목록"],
+        "state": ["상태 구조", "상태 변경 시나리오"]
+      }
+    },
+
+    "library": {
+      "required_files": [
+        "specs/api/PLAN-{number}-{slug}.md",
+        "specs/examples/PLAN-{number}-{slug}.md",
+        "specs/test-cases/PLAN-{number}-api.md",
+        "specs/test-cases/PLAN-{number}-examples.md"
+      ],
+      "required_sections": {
+        "api": ["함수 시그니처", "파라미터", "반환값", "예외"],
+        "examples": ["기본 사용", "에러 처리"]
+      }
+    }
+  }
+}

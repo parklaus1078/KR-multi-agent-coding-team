@@ -242,6 +242,59 @@ echo "💡 에이전트가 Rate Limit 체크를 자동으로 수행합니다."
 echo "   종료: Ctrl+C"
 echo ""
 
+# ── 세션 관리 ────────────────────────────────────────────────
+SESSIONS_DIR="$PROJECT_PATH/.sessions"
+SESSION_MAP="$SESSIONS_DIR/session-map.json"
+
+# 세션 디렉토리 생성
+mkdir -p "$SESSIONS_DIR"
+
+# 세션 이름 생성 (티켓 번호가 있으면 사용)
+SESSION_NAME=""
+if [[ -n "$TICKET_NUM" ]]; then
+    SESSION_NAME="${TICKET_NUM}-${AGENT_NAME}"
+    TICKET_SESSION_DIR="$SESSIONS_DIR/$TICKET_NUM"
+    mkdir -p "$TICKET_SESSION_DIR"
+fi
+
+# 세션 ID 생성 (UUID)
+SESSION_ID=$(uuidgen 2>/dev/null || python3 -c "import uuid; print(uuid.uuid4())")
+
+# 세션 정보 저장 함수
+save_session_info() {
+    if [[ -n "$TICKET_NUM" ]]; then
+        # session-map.json 업데이트
+        if [[ ! -f "$SESSION_MAP" ]]; then
+            echo "{}" > "$SESSION_MAP"
+        fi
+
+        # jq로 세션 정보 추가
+        TMP_FILE=$(mktemp)
+        jq --arg ticket "$TICKET_NUM" \
+           --arg agent "$AGENT_NAME" \
+           --arg sid "$SESSION_ID" \
+           --arg ts "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+           '.[$ticket][$agent] = {
+               "session_id": $sid,
+               "timestamp": $ts,
+               "status": "completed",
+               "command": "claude --resume \($sid)"
+           }' "$SESSION_MAP" > "$TMP_FILE" && mv "$TMP_FILE" "$SESSION_MAP"
+
+        # 개별 세션 파일 저장
+        echo "$SESSION_ID" > "$TICKET_SESSION_DIR/${AGENT_NAME}.session"
+
+        echo ""
+        echo "💾 세션 저장됨: $TICKET_NUM / $AGENT_NAME"
+        echo "   재개 명령: claude --resume $SESSION_ID"
+        echo "   또는: bash scripts/resume-session.sh $TICKET_NUM $AGENT_NAME"
+        echo ""
+    fi
+}
+
+# Trap으로 종료 시 세션 저장
+trap save_session_info EXIT
+
 # ── claude 실행 ──────────────────────────────────────────────
 # --append-system-prompt: Claude Code 기본값을 유지하면서 CLAUDE.md를 추가
 # (--system-prompt 사용 시 Claude Code 내장 도구 설명이 제거되므로 사용 금지)
@@ -256,6 +309,8 @@ echo ""
 
 exec claude \
     --model claude-sonnet-4-5 \
+    --session-id "$SESSION_ID" \
+    --name "$SESSION_NAME" \
     --append-system-prompt "$(cat "$CLAUDE_MD")" \
     --allowedTools "Bash" "Read" "Edit" "Write" \
     <<EOF

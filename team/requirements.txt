@@ -1,0 +1,20 @@
+# Multi-Agent Coding Team - API Requirements
+
+# FastAPI
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Pydantic
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# HTTP Client
+aiohttp==3.9.1
+httpx==0.26.0
+
+# Anthropic SDK
+anthropic==0.8.1
+
+# Utils
+python-dotenv==1.0.0

@@ -92,6 +92,47 @@ cat projects/{current_project}/.project-meta.json
 
 ---
 
+## 🛠️ Skills 통합 (Phase 3.3)
+
+Coding Agent는 코드 작성 후 다음 Skills를 활용합니다:
+
+### 1. refactor-code skill (선택)
+
+코드 작성 완료 후 리팩토링 제안 확인:
+
+```bash
+# 변경된 파일에 대해 리팩토링 제안
+bash scripts/run-skill.sh refactor-code --dir src/
+```
+
+**감지 항목**:
+- 긴 함수 (> 50줄)
+- 중복 코드 (6줄 이상)
+- 매직 넘버
+- N+1 쿼리
+- 직렬 비동기
+
+**제안 적용**:
+- Auto-fix 가능: `--auto-fix` 플래그 사용
+- 수동 수정: 리포트 참고하여 개선
+
+### 2. commit skill (자동)
+
+코드 작성 완료 후 커밋 메시지 자동 생성:
+
+```bash
+# 자동 커밋 (auto-pipeline에서 실행)
+bash scripts/run-skill.sh commit --ticket {티켓번호}
+```
+
+**자동 결정**:
+- 커밋 타입 (feat/fix/refactor/test)
+- Subject (70자 이하, 명령형)
+- Body (변경 파일 목록)
+- Footer (Closes, Co-Authored-By)
+
+---
+
 ## 🔨 작업 순서
 
 ### Step 1. 입력 파일 읽기

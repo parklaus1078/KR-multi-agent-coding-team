@@ -1,0 +1,47 @@
+{
+  "version": "0.0.1",
+  "updated": "2026-03-19",
+  "description": "프로젝트별 커밋 메시지 히스토리 및 어휘 학습",
+
+  "project": "multi-agent-coding-team",
+
+  "vocabulary": {
+    "auth": ["authentication", "login", "logout", "token", "session"],
+    "user": ["profile", "settings", "preferences", "account"],
+    "api": ["endpoint", "route", "handler", "response"],
+    "test": ["unit", "integration", "e2e", "spec", "coverage"],
+    "docs": ["documentation", "readme", "guide", "tutorial"]
+  },
+
+  "frequent_verbs": {
+    "feat": ["implement", "add", "create", "introduce"],
+    "fix": ["fix", "resolve", "correct", "patch"],
+    "test": ["add tests for", "test", "cover"],
+    "refactor": ["refactor", "improve", "optimize", "restructure"],
+    "docs": ["update", "add", "improve", "document"],
+    "chore": ["update", "configure", "setup", "maintain"],
+    "style": ["format", "style", "lint"]
+  },
+
+  "recent_commits": [],
+
+  "statistics": {
+    "total_commits": 0,
+    "by_type": {
+      "feat": 0,
+      "fix": 0,
+      "test": 0,
+      "refactor": 0,
+      "docs": 0,
+      "chore": 0,
+      "style": 0
+    },
+    "avg_message_length": 0,
+    "consistency_score": 0.0
+  },
+
+  "learning_notes": [
+    "초기 설정 - Git log에서 학습 필요",
+    "주기적으로 learn_from_git_history() 실행 권장"
+  ]
+}

@@ -14,17 +14,14 @@
 
   "branch_naming": {
     "prefix_by_agent": {
-      "pm": "docs",
       "coding": "feature",
       "qa": "test"
     },
     "base_branch_by_agent": {
-      "pm": "base_branch",
       "coding": "base_branch",
       "qa": "feature_branch"
     },
     "examples": {
-      "pm": "docs/PLAN-001-user-auth (from main/dev)",
       "coding": "feature/PLAN-001-user-auth (from main/dev)",
       "qa": "test/PLAN-001-user-auth (from feature/PLAN-001-user-auth)"
     }
@@ -33,7 +30,6 @@
   "commit_message_template": {
     "format": "{type}({ticket}): {description}\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>",
     "types": {
-      "pm": "docs",
       "coding": "feat",
       "qa": "test"
     }

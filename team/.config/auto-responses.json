@@ -1,0 +1,211 @@
+{
+  "version": "0.0.1",
+  "description": "Auto-pipeline에서 에이전트 질문에 자동으로 응답하는 규칙. 하드코딩 대신 데이터로 관리.",
+  "updated": "2026-03-19",
+
+  "pm": {
+    "patterns": [
+      {
+        "id": "prevent-scope-creep",
+        "trigger": "(기능|구현|엔드포인트|화면|API).*(추가|포함).*할까요|.*(추가|포함).*(기능|구현|엔드포인트|화면|API).*할까요",
+        "response": "no, 티켓 범위 내에서만 진행해주세요. 추가 기능은 Out-of-Scope 섹션에 기록만 하세요.",
+        "reason": "scope_creep_prevention",
+        "gotcha_ref": "gotchas.md#1",
+        "confidence": 0.95,
+        "examples": [
+          "OAuth 기능도 추가할까요?",
+          "비밀번호 재설정 기능도 구현할까요?"
+        ]
+      },
+      {
+        "id": "prevent-tech-change",
+        "trigger": "(변경|바꾸|다른).*(기술|라이브러리|프레임워크).*할까요",
+        "response": "no, 현재 명세대로 진행해주세요. 기술 스택은 .project-meta.json을 따릅니다.",
+        "reason": "tech_stack_consistency",
+        "confidence": 0.98,
+        "examples": [
+          "GraphQL로 변경할까요?",
+          "다른 UI 라이브러리를 사용할까요?"
+        ]
+      },
+      {
+        "id": "handle-ambiguity",
+        "trigger": "(애매|모호|불명확|확실하지|명확하지)",
+        "response": "티켓의 Acceptance Criteria를 기반으로 합리적으로 판단하고, 결정 근거를 로그에 상세히 기록해주세요. 위험도와 신뢰도도 함께 기록하세요.",
+        "reason": "ambiguity_handling",
+        "gotcha_ref": "gotchas.md#1",
+        "confidence": 0.85,
+        "examples": [
+          "이 부분이 애매한데 어떻게 할까요?",
+          "요구사항이 불명확합니다"
+        ]
+      },
+      {
+        "id": "confirm-exclusion",
+        "trigger": "(제외|빼|생략).*해도.*될까요",
+        "response": "yes, 티켓에 명시되지 않은 기능은 제외하되, Out-of-Scope 섹션에 반드시 기록하세요.",
+        "reason": "explicit_scope_definition",
+        "confidence": 0.90,
+        "examples": [
+          "이메일 인증은 제외해도 될까요?",
+          "관리자 기능은 생략해도 될까요?"
+        ]
+      },
+      {
+        "id": "continue-on-assumption",
+        "trigger": "(가정|추측|추론).*진행.*할까요",
+        "response": "yes, 합리적인 가정이라면 진행하되, 가정 내용과 근거를 로그에 명확히 기록하세요.",
+        "reason": "documented_assumption",
+        "confidence": 0.80,
+        "examples": [
+          "기본값을 10으로 가정하고 진행할까요?",
+          "이 API는 GET 메서드로 추론됩니다. 진행할까요?"
+        ]
+      }
+    ]
+  },
+
+  "coding": {
+    "patterns": [
+      {
+        "id": "prefer-coding-rules",
+        "trigger": "(더 나은|다른|개선된).*(패턴|방법|접근)",
+        "response": "코딩 룰(.rules/)에 명시된 패턴을 우선 사용하세요. 대안이 명백히 우수하면 근거를 로그에 작성하고 진행하세요.",
+        "reason": "architecture_consistency",
+        "confidence": 0.92,
+        "examples": [
+          "더 나은 패턴이 있는데 사용할까요?",
+          "다른 디자인 패턴이 더 적합해 보입니다"
+        ]
+      },
+      {
+        "id": "prevent-over-engineering",
+        "trigger": "(추가|확장|일반화).*(구조|추상화|레이어)",
+        "response": "no, 현재 티켓에 필요한 구현만 하세요. 미래를 위한 과도한 추상화는 금지입니다.",
+        "reason": "prevent_over_engineering",
+        "confidence": 0.88,
+        "examples": [
+          "확장 가능한 구조를 추가할까요?",
+          "일반화된 레이어를 만들까요?"
+        ]
+      },
+      {
+        "id": "handle-missing-spec",
+        "trigger": "(명세|스펙).*없는데",
+        "response": "명세서(.planning/specs/)를 먼저 확인하세요. 정말 없다면 PM Agent를 먼저 실행해야 합니다.",
+        "reason": "spec_required",
+        "confidence": 0.95,
+        "examples": [
+          "API 명세가 없는데 어떻게 할까요?",
+          "스펙이 불완전한데 진행할까요?"
+        ]
+      },
+      {
+        "id": "ask-about-test",
+        "trigger": "테스트.*작성.*할까요",
+        "response": "no, 테스트는 QA Agent의 역할입니다. 구현에만 집중하세요.",
+        "reason": "separation_of_concerns",
+        "confidence": 0.99,
+        "examples": [
+          "유닛 테스트도 작성할까요?",
+          "테스트 케이스를 만들까요?"
+        ]
+      }
+    ]
+  },
+
+  "qa": {
+    "patterns": [
+      {
+        "id": "require-implementation",
+        "trigger": "구현.*코드.*없는데",
+        "response": "구현 코드가 없으면 테스트를 작성할 수 없습니다. Coding Agent를 먼저 실행하세요.",
+        "reason": "implementation_required",
+        "confidence": 0.99,
+        "examples": [
+          "구현 코드가 없는데 테스트를 작성할까요?",
+          "아직 코드가 없습니다"
+        ]
+      },
+      {
+        "id": "use-project-framework",
+        "trigger": "다른.*(테스트.*프레임워크|라이브러리)",
+        "response": "no, .project-meta.json에 정의된 테스트 프레임워크를 사용하세요.",
+        "reason": "framework_consistency",
+        "confidence": 0.97,
+        "examples": [
+          "다른 테스트 라이브러리를 사용할까요?",
+          "Jest 대신 Vitest를 쓸까요?"
+        ]
+      },
+      {
+        "id": "follow-test-cases",
+        "trigger": "테스트.*케이스.*추가.*할까요",
+        "response": "no, planning/test-cases/에 정의된 케이스만 작성하세요. 추가 케이스가 필요하면 로그에 기록만 하세요.",
+        "reason": "scope_adherence",
+        "confidence": 0.90,
+        "examples": [
+          "엣지 케이스를 더 추가할까요?",
+          "추가 테스트가 필요해 보입니다"
+        ]
+      }
+    ]
+  },
+
+  "project-planner": {
+    "patterns": [
+      {
+        "id": "user-approval-required",
+        "trigger": "(계획|티켓).*생성.*할까요",
+        "response": "yes, 하지만 사용자에게 먼저 계획을 보여주고 승인받은 후 생성하세요.",
+        "reason": "user_approval",
+        "confidence": 0.99,
+        "examples": [
+          "지금 티켓을 생성할까요?",
+          "이 계획대로 진행할까요?"
+        ]
+      },
+      {
+        "id": "prevent-ticket-bloat",
+        "trigger": "(더 세분화|더 나누)",
+        "response": "no, 독립적으로 구현 가능한 최소 단위가 맞으면 충분합니다. 과도한 세분화는 오히려 복잡도를 높입니다.",
+        "reason": "prevent_over_splitting",
+        "confidence": 0.85,
+        "examples": [
+          "티켓을 더 세분화할까요?",
+          "더 나눌까요?"
+        ]
+      }
+    ]
+  },
+
+  "global": {
+    "description": "모든 에이전트에 공통 적용되는 패턴",
+    "patterns": [
+      {
+        "id": "continue-default",
+        "trigger": "(계속|진행).*할까요",
+        "response": "yes, 현재 계획대로 진행하세요.",
+        "reason": "default_continue",
+        "confidence": 0.70,
+        "examples": [
+          "계속 진행할까요?",
+          "이대로 진행해도 될까요?"
+        ]
+      },
+      {
+        "id": "confirm-completion",
+        "trigger": "(완료|끝|마침).*했습니까",
+        "response": "작업 완료 시 반드시 '✅ {Agent} 작업 완료' 메시지를 출력하세요.",
+        "reason": "completion_marker",
+        "confidence": 0.95
+      }
+    ]
+  },
+
+  "fallback": {
+    "description": "매칭되는 패턴이 없을 때 기본 응답",
+    "default_response": "현재 계획대로 진행하되, 중요한 결정은 로그에 근거와 함께 기록하세요.",
+    "confidence": 0.50
+  }
+}

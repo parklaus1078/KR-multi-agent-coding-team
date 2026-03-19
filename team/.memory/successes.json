@@ -1,0 +1,39 @@
+{
+  "version": "0.0.1",
+  "updated": "2026-03-19",
+  "description": "검증된 모범 사례 - 성공적으로 완료된 의사결정과 구현 패턴",
+
+  "successes": [],
+
+  "success_template": {
+    "id": "success_XXX",
+    "ticket": "PLAN-XXX",
+    "agent": "pm | coding | qa",
+    "timestamp": "2026-03-19T10:30:00Z",
+    "decision": "내린 의사결정",
+    "outcome": "결과 (왜 성공으로 판단했나)",
+    "verification_method": "테스트 통과 | 사용자 승인 | 코드 리뷰 통과",
+    "confidence_score": 0.0,
+    "actual_confidence": 0.0,
+    "context": "결정 당시 상황",
+    "why_it_worked": "성공 요인",
+    "reusable": true,
+    "pattern_id": "patterns.json에 추가된 패턴 ID (해당 시)",
+    "related_tickets": [],
+    "notes": "추가 메모"
+  },
+
+  "statistics": {
+    "total_successes": 0,
+    "by_agent": {
+      "pm": 0,
+      "coding": 0,
+      "qa": 0,
+      "project-planner": 0
+    },
+    "high_confidence_successes": 0,
+    "low_confidence_surprises": 0,
+    "patterns_extracted": 0,
+    "last_success_date": null
+  }
+}

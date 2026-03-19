@@ -1,0 +1,239 @@
+{
+  "version": "0.0.1",
+  "updated": "2026-03-19",
+  "description": "구조화된 의사결정 로그 스키마 - 에이전트의 결정 과정을 기록하여 학습 가능",
+
+  "log_structure": {
+    "metadata": {
+      "required": true,
+      "fields": {
+        "agent": {
+          "type": "string",
+          "description": "에이전트 이름 (pm, coding, qa, project-planner)",
+          "required": true
+        },
+        "ticket": {
+          "type": "string",
+          "description": "티켓 번호 (PLAN-001)",
+          "required": true
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "ISO8601",
+          "description": "작업 시작 시간",
+          "required": true
+        },
+        "decision_count": {
+          "type": "number",
+          "description": "의사결정 개수",
+          "required": true
+        },
+        "completion_status": {
+          "type": "string",
+          "enum": ["success", "partial", "failed"],
+          "required": true
+        }
+      }
+    },
+
+    "decisions": {
+      "required": true,
+      "description": "의사결정 목록 (배열)",
+      "item_schema": {
+        "id": {
+          "type": "string",
+          "description": "결정 고유 ID (D-001)",
+          "required": true
+        },
+        "title": {
+          "type": "string",
+          "description": "결정 제목 (예: OAuth 제외)",
+          "required": true
+        },
+        "context": {
+          "type": "string",
+          "description": "결정이 필요했던 상황",
+          "required": true
+        },
+        "options": {
+          "type": "array",
+          "description": "고려한 옵션들",
+          "required": true
+        },
+        "selected": {
+          "type": "string",
+          "description": "선택한 옵션",
+          "required": true
+        },
+        "reason": {
+          "type": "string",
+          "description": "선택 이유 (상세)",
+          "required": true
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "위험도 (틀렸을 때 영향)",
+          "required": true
+        },
+        "confidence": {
+          "type": "number",
+          "min": 0,
+          "max": 1,
+          "description": "신뢰도 (0.0-1.0)",
+          "required": true
+        },
+        "gotcha_applied": {
+          "type": "string",
+          "description": "적용한 Gotcha (gotchas.md#1)",
+          "required": false
+        },
+        "outcome": {
+          "type": "string",
+          "enum": ["unknown", "correct", "incorrect", "suboptimal"],
+          "description": "사후 평가 (나중에 업데이트)",
+          "required": false
+        }
+      }
+    },
+
+    "gotchas_applied": {
+      "required": true,
+      "description": "적용한 Gotcha 목록",
+      "type": "array",
+      "items": {
+        "gotcha_id": "string",
+        "gotcha_title": "string",
+        "how_applied": "string"
+      }
+    },
+
+    "patterns_observed": {
+      "required": false,
+      "description": "관찰된 패턴 (향후 학습용)",
+      "type": "array",
+      "items": {
+        "pattern": "string",
+        "frequency": "string",
+        "confidence": "number"
+      }
+    },
+
+    "auto_responses_triggered": {
+      "required": false,
+      "description": "발동된 자동 응답 규칙",
+      "type": "array",
+      "items": {
+        "rule_id": "string",
+        "trigger": "string",
+        "response": "string"
+      }
+    },
+
+    "issues_encountered": {
+      "required": false,
+      "description": "발생한 이슈 (향후 Gotcha 후보)",
+      "type": "array",
+      "items": {
+        "issue": "string",
+        "severity": "string",
+        "resolution": "string"
+      }
+    }
+  },
+
+  "logging_guidelines": {
+    "when_to_log_decision": [
+      "티켓에 명시되지 않은 사항을 해석할 때",
+      "여러 옵션 중 하나를 선택할 때",
+      "Gotcha 규칙을 적용할 때",
+      "위험도 Medium 이상의 가정을 할 때",
+      "범위 내/외 판단을 할 때"
+    ],
+    "when_NOT_to_log": [
+      "명백한 결정 (티켓에 명시된 그대로)",
+      "단순 반복 작업 (파일 생성 등)",
+      "자동화된 처리 (템플릿 적용)"
+    ],
+    "confidence_scoring": {
+      "0.9-1.0": "티켓에 명시, 또는 Gotcha 규칙 명확 적용",
+      "0.7-0.9": "합리적 추론, 업계 표준 패턴",
+      "0.5-0.7": "가정 포함, 사용자 확인 권장",
+      "0.0-0.5": "불확실, 사용자에게 질문 필요"
+    },
+    "risk_scoring": {
+      "low": "틀려도 쉽게 수정 가능, 영향 범위 작음",
+      "medium": "재작업 필요, 다른 부분에 영향",
+      "high": "큰 재작업, 아키텍처 변경, 비용 큼"
+    }
+  },
+
+  "example_log": {
+    "metadata": {
+      "agent": "pm",
+      "ticket": "PLAN-001",
+      "timestamp": "2026-03-19T10:30:00Z",
+      "decision_count": 2,
+      "completion_status": "success"
+    },
+    "decisions": [
+      {
+        "id": "D-001",
+        "title": "OAuth 제외",
+        "context": "티켓에 'login' 명시, 방법 미지정",
+        "options": ["Email/Password만", "OAuth", "둘 다"],
+        "selected": "Email/Password만",
+        "reason": "Acceptance Criteria에 'email/password로 로그인'이라고 명시. OAuth는 명시되지 않음.",
+        "risk_level": "low",
+        "confidence": 0.95,
+        "gotcha_applied": "gotchas.md#1",
+        "outcome": "unknown"
+      },
+      {
+        "id": "D-002",
+        "title": "비밀번호 재설정 제외",
+        "context": "티켓에 없지만 일반적인 패턴",
+        "options": ["포함", "제외", "사용자에게 질문"],
+        "selected": "제외",
+        "reason": "Gotcha #1 적용 (범위 확대 방지). 티켓에 명시되지 않았으므로 Out-of-Scope에 기록.",
+        "risk_level": "medium",
+        "confidence": 0.70,
+        "gotcha_applied": "gotchas.md#1",
+        "outcome": "unknown"
+      }
+    ],
+    "gotchas_applied": [
+      {
+        "gotcha_id": "1",
+        "gotcha_title": "범위 확대 (Scope Creep)",
+        "how_applied": "티켓 Acceptance Criteria 확인 후, 명시되지 않은 OAuth와 비밀번호 재설정 제외"
+      }
+    ],
+    "patterns_observed": [
+      {
+        "pattern": "사용자가 'auth'라고 하면 로그인/로그아웃만 의미할 가능성 높음",
+        "frequency": "이번 티켓",
+        "confidence": 0.8
+      }
+    ],
+    "auto_responses_triggered": [
+      {
+        "rule_id": "prevent-scope-creep",
+        "trigger": "OAuth 기능도 추가할까요?",
+        "response": "no, 티켓 범위 내에서만 진행해주세요."
+      }
+    ],
+    "issues_encountered": []
+  },
+
+  "output_format": {
+    "json": {
+      "path": "projects/{project}/logs/{agent}/{timestamp}-{ticket}.json",
+      "description": "기계 분석용"
+    },
+    "markdown": {
+      "path": "projects/{project}/logs/{agent}/{timestamp}-{ticket}.md",
+      "description": "사람 읽기용"
+    }
+  }
+}

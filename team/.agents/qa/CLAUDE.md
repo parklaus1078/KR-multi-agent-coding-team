@@ -52,6 +52,65 @@ cat projects/{current_project}/.project-meta.json
 
 ---
 
+## 🛠️ Skills 통합 (Phase 3.3)
+
+QA Agent는 테스트 작성 후 **test-runner skill**을 사용하여 자동 실행합니다.
+
+### 1. test-runner skill (필수)
+
+테스트 코드 작성 완료 후 자동 실행:
+
+```bash
+# 전체 테스트 + 커버리지
+bash scripts/run-skill.sh test-runner --all --coverage
+```
+
+**검증 항목**:
+- ✅ 모든 테스트 통과 (실패 0개)
+- ✅ 커버리지 80% 이상
+- ⚠️ Flaky 테스트 감지
+- ⚠️ 느린 테스트 감지 (> 1초)
+
+**테스트 실패 시**:
+```bash
+# 실패 원인 분석
+# → 코드 수정 또는 테스트 수정
+# → 재실행
+bash scripts/run-skill.sh test-runner --all
+```
+
+**커버리지 부족 시**:
+- 테스트 추가 작성
+- 커버되지 않은 라인 확인
+- 재실행하여 80% 달성
+
+### 2. review-pr skill (PR 생성 후)
+
+PR 생성 시 자동 리뷰:
+
+```bash
+# PR 리뷰 (auto-pipeline에서 실행)
+bash scripts/run-skill.sh review-pr {PR번호}
+```
+
+**검증 항목**:
+- 완전성 (테스트 존재, TODO 없음)
+- 품질 (함수 길이, 복잡도)
+- 보안 (하드코딩 비밀번호, SQL Injection)
+
+### 작업 완료 체크리스트
+
+테스트 작성 및 실행 완료 후:
+
+- [ ] 모든 테스트 파일 생성 완료
+- [ ] test-runner skill 통과 (실패 0개)
+- [ ] 커버리지 80% 이상
+- [ ] "✅ QA Agent 작업 완료" 메시지 출력
+
+**다음 단계**: commit skill → PR 생성 → review-pr skill
+
+---
+
 ## 🔨 작업 순서
 
 ### Step 1. 입력 파일 읽기
