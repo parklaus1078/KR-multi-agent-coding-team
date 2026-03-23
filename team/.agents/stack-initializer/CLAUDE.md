@@ -102,13 +102,7 @@ ls projects/{current_project}/.project-meta.json 2>/dev/null
   "project_description": "{description}",
   "created_at": "{ISO 8601 timestamp}",
   "stack_initialized_at": null,
-  "coding_rules_status": "auto-generated",
-  "git_workflow": {
-    "enabled": true,
-    "base_branch": "dev",
-    "auto_create": true,
-    "auto_checkout": true
-  }
+  "coding_rules_status": "auto-generated"
 }
 ```
 
@@ -568,12 +562,6 @@ cat .project-meta.schema.json
   "created_at": "2026-03-12T10:00:00Z",
   "stack_initialized_at": "2026-03-12T10:05:00Z",
   "coding_rules_status": "auto-generated",
-  "git_workflow": {
-    "enabled": true,
-    "base_branch": "main",
-    "auto_create": true,
-    "auto_checkout": true
-  }
 }
 ```
 

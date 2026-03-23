@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
-Auto Pipeline - Claude Agent SDK 기반
+Auto Pipeline - Claude Code 기반
 Shell script의 auto-pipeline.sh를 대체하는 Python 구현
+
+⚠️ 중요: Anthropic API SDK 대신 Claude Code CLI를 사용합니다.
+비용 절감: API 직접 호출보다 Claude Code가 훨씬 저렴합니다.
 """
 
 import os
@@ -10,7 +13,6 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from anthropic import Anthropic
 
 class AutoPipeline:
     def __init__(self, project_path: str):
@@ -19,11 +21,28 @@ class AutoPipeline:
         self.progress_file = self.project_path / ".pipeline-progress.json"
         self.sessions_dir = self.project_path / ".sessions"
 
-        # Anthropic API 클라이언트
-        self.client = Anthropic()
+        # Claude Code CLI 경로 확인
+        self.claude_cli = self._check_claude_cli()
 
         # 자동 응답 규칙 (JSON에서 로드)
         self.auto_responses = self._load_auto_responses()
+
+    def _check_claude_cli(self) -> str:
+        """Claude Code CLI 설치 확인"""
+        try:
+            result = subprocess.run(
+                ["which", "claude"],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            claude_path = result.stdout.strip()
+            print(f"✅ Claude Code CLI 발견: {claude_path}")
+            return "claude"
+        except subprocess.CalledProcessError:
+            print("❌ Claude Code CLI를 찾을 수 없습니다.")
+            print("   설치: https://docs.claude.ai/claude-code")
+            raise RuntimeError("Claude Code CLI가 설치되지 않았습니다.")
 
     def _load_auto_responses(self) -> dict:
         """auto-responses.json 파일 로드"""
@@ -51,11 +70,8 @@ class AutoPipeline:
                 }
             }
 
-    def load_agent_prompt(self, agent_name: str) -> str:
-        """에이전트 CLAUDE.md 로드"""
-        claude_md = self.workspace_root / f".agents/{agent_name}/CLAUDE.md"
-        with open(claude_md, 'r') as f:
-            return f.read()
+    # load_agent_prompt 메서드 제거
+    # Claude Code CLI가 자동으로 CLAUDE.md를 로드함
 
     def load_progress(self) -> dict:
         """진행상황 로드"""
@@ -77,7 +93,7 @@ class AutoPipeline:
 
     def run_agent(self, agent_name: str, user_prompt: str, ticket_num: str = None) -> dict:
         """
-        에이전트 실행 (핵심 기능)
+        에이전트 실행 (Claude Code CLI 사용)
 
         Args:
             agent_name: pm, coding, qa 등
@@ -87,110 +103,166 @@ class AutoPipeline:
         Returns:
             결과 딕셔너리
         """
-        # 에이전트 시스템 프롬프트 로드
-        system_prompt = self.load_agent_prompt(agent_name)
-
         # 세션 ID 생성
         import uuid
         session_id = str(uuid.uuid4())
 
-        print(f"🤖 {agent_name.upper()} Agent 실행 중...")
+        print(f"🤖 {agent_name.upper()} Agent 실행 중 (Claude Code CLI)...")
         print(f"📋 프롬프트: {user_prompt[:100]}...")
 
-        # 대화 히스토리
-        messages = [{"role": "user", "content": user_prompt}]
+        # 에이전트 디렉토리로 이동
+        agent_dir = self.workspace_root / ".agents" / agent_name
 
-        # 자동 응답 루프
-        max_turns = 10  # 무한 루프 방지
-        turn = 0
+        if not agent_dir.exists():
+            raise FileNotFoundError(f"에이전트 디렉토리를 찾을 수 없습니다: {agent_dir}")
 
-        while turn < max_turns:
-            turn += 1
+        # 이전 세션 컨텍스트 로드 (세션 공유)
+        context_prompt = ""
+        if ticket_num:
+            previous_context = self._load_previous_sessions(ticket_num, agent_name)
+            if previous_context:
+                print(f"📚 이전 세션 컨텍스트 로드")
+                context_prompt = f"\n\n## 이전 에이전트 세션 정보\n\n{previous_context}\n\n---\n\n"
 
-            # Claude API 호출
-            response = self.client.messages.create(
-                model="claude-sonnet-4-5-20241022",
-                max_tokens=8000,
-                system=system_prompt,
-                messages=messages
+        # 최종 프롬프트 조합
+        full_prompt = context_prompt + user_prompt
+
+        # 임시 프롬프트 파일 생성 (stdin으로 전달하기 위해)
+        prompt_file = self.project_path / f".tmp-prompt-{agent_name}-{session_id[:8]}.txt"
+        prompt_file.write_text(full_prompt, encoding='utf-8')
+
+        try:
+            # Claude Code CLI 실행
+            # claude < prompt.txt 형식으로 실행
+            result = subprocess.run(
+                [self.claude_cli],
+                stdin=open(prompt_file, 'r'),
+                capture_output=True,
+                text=True,
+                cwd=agent_dir,  # 에이전트 디렉토리에서 실행 (CLAUDE.md 자동 로드)
+                timeout=600  # 10분 타임아웃
             )
 
-            # 응답 처리
-            assistant_message = response.content[0].text
+            # 결과 파싱
+            output = result.stdout
+            error = result.stderr
+
+            if result.returncode != 0:
+                print(f"❌ Claude Code 실행 실패:")
+                print(f"   Exit code: {result.returncode}")
+                print(f"   Error: {error}")
+                return {
+                    "success": False,
+                    "error": error,
+                    "session_id": session_id
+                }
+
             print(f"\n{'='*60}")
-            print(f"Claude (Turn {turn}):")
-            print(assistant_message)
+            print(f"Claude Code 출력:")
+            print(output)
             print('='*60)
 
-            # 대화 히스토리에 추가
-            messages.append({
-                "role": "assistant",
-                "content": assistant_message
-            })
+            # 세션 저장 (간소화된 형식)
+            messages = [
+                {"role": "user", "content": full_prompt},
+                {"role": "assistant", "content": output}
+            ]
 
-            # 종료 조건 체크
-            if response.stop_reason == "end_turn":
-                print("✅ 에이전트 작업 완료")
+            if ticket_num:
+                self._save_session(ticket_num, agent_name, session_id, messages)
+
+            return {
+                "success": True,
+                "session_id": session_id,
+                "messages": messages,
+                "output": output
+            }
+
+        finally:
+            # 임시 파일 삭제
+            if prompt_file.exists():
+                prompt_file.unlink()
+
+    # _check_auto_response 메서드 제거
+    # Claude Code CLI는 자체적으로 대화를 처리하므로 자동 응답 루프 불필요
+
+    def _load_previous_sessions(self, ticket_num: str, current_agent: str) -> str:
+        """
+        이전 에이전트 세션 로드 (세션 공유)
+
+        Args:
+            ticket_num: 티켓 번호 (예: BILL-001)
+            current_agent: 현재 실행 중인 에이전트 (pm, coding, qa)
+
+        Returns:
+            이전 세션 요약 텍스트
+        """
+        ticket_dir = self.sessions_dir / ticket_num
+        if not ticket_dir.exists():
+            return ""
+
+        # 에이전트 실행 순서 정의
+        agent_order = ["project-planner", "pm", "coding", "qa"]
+
+        try:
+            current_index = agent_order.index(current_agent)
+        except ValueError:
+            return ""
+
+        # 이전 에이전트들의 세션 로드
+        previous_agents = agent_order[:current_index]
+        context_parts = []
+
+        for prev_agent in previous_agents:
+            session_file = ticket_dir / f"{prev_agent}.json"
+            if session_file.exists():
+                with open(session_file, 'r') as f:
+                    session_data = json.load(f)
+
+                # 세션 요약 생성
+                summary = self._summarize_session(prev_agent, session_data)
+                if summary:
+                    context_parts.append(f"### {prev_agent.upper()} Agent\n{summary}")
+
+        if not context_parts:
+            return ""
+
+        return "\n\n".join(context_parts)
+
+    def _summarize_session(self, agent_name: str, session_data: dict) -> str:
+        """
+        세션 데이터를 요약
+
+        Args:
+            agent_name: 에이전트 이름
+            session_data: 세션 데이터 (messages 포함)
+
+        Returns:
+            요약 텍스트
+        """
+        messages = session_data.get("messages", [])
+
+        if not messages:
+            return ""
+
+        # 마지막 assistant 메시지 추출 (주요 산출물)
+        last_assistant_msg = None
+        for msg in reversed(messages):
+            if msg.get("role") == "assistant":
+                last_assistant_msg = msg.get("content", "")
                 break
 
-            # 자동 응답 체크
-            auto_response = self._check_auto_response(assistant_message, agent_name)
+        if not last_assistant_msg:
+            return ""
 
-            if auto_response:
-                print(f"\n[AUTO-RESPONSE] {auto_response}")
-                messages.append({
-                    "role": "user",
-                    "content": auto_response
-                })
-            else:
-                # 질문이 있지만 자동 응답 규칙이 없는 경우
-                print("\n⚠️  알 수 없는 질문 - fallback 응답으로 진행")
-                fallback_response = self.auto_responses.get("fallback", {}).get("default_response", "현재 계획대로 진행해주세요.")
-                messages.append({
-                    "role": "user",
-                    "content": fallback_response
-                })
+        # 길이 제한 (너무 길면 컨텍스트 윈도우 초과)
+        max_length = 2000
+        if len(last_assistant_msg) > max_length:
+            summary = last_assistant_msg[:max_length] + "\n\n...(생략)"
+        else:
+            summary = last_assistant_msg
 
-        # 세션 저장
-        if ticket_num:
-            self._save_session(ticket_num, agent_name, session_id, messages)
-
-        return {
-            "success": True,
-            "session_id": session_id,
-            "messages": messages
-        }
-
-    def _check_auto_response(self, message: str, agent_name: str = "global") -> str:
-        """메시지에서 질문 감지 및 자동 응답 반환 (Regex 지원)"""
-
-        # 1. 에이전트별 규칙 체크
-        agent_patterns = self.auto_responses.get(agent_name, {}).get("patterns", [])
-        for rule in agent_patterns:
-            try:
-                if re.search(rule["trigger"], message, re.IGNORECASE):
-                    print(f"   [매칭된 규칙: {rule['id']}]")
-                    if "gotcha_ref" in rule:
-                        print(f"   [참조: {rule['gotcha_ref']}]")
-                    return rule["response"]
-            except re.error as e:
-                print(f"⚠️  Regex 에러 ({rule['id']}): {e}")
-                continue
-
-        # 2. Global 규칙 체크
-        global_patterns = self.auto_responses.get("global", {}).get("patterns", [])
-        for rule in global_patterns:
-            try:
-                if re.search(rule["trigger"], message, re.IGNORECASE):
-                    print(f"   [매칭된 규칙: global/{rule['id']}]")
-                    return rule["response"]
-            except re.error as e:
-                print(f"⚠️  Regex 에러 (global/{rule['id']}): {e}")
-                continue
-
-        # 3. Fallback
-        fallback = self.auto_responses.get("fallback", {})
-        return fallback.get("default_response", None)
+        return f"**주요 내용:**\n{summary}"
 
     def _save_session(self, ticket_num: str, agent_name: str, session_id: str, messages: list):
         """세션 정보 저장"""
@@ -223,7 +295,8 @@ class AutoPipeline:
         with open(session_file, 'w') as f:
             json.dump({
                 "session_id": session_id,
-                "messages": messages
+                "messages": messages,
+                "timestamp": datetime.utcnow().isoformat() + "Z"
             }, f, indent=2)
 
     def run_full_pipeline(self, resume: bool = False):

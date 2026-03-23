@@ -55,20 +55,18 @@ bash scripts/run-agent.sh stack-initializer
 # Project Planner
 bash scripts/run-agent.sh project-planner --project "프로젝트 설명"
 
-# PM (Git 브랜치 자동 생성)
+# PM
 bash scripts/run-agent.sh pm --ticket-file projects/{name}/planning/tickets/PLAN-001-*.md
 
-# Coding (Git 브랜치 자동 생성)
+# Coding
 bash scripts/run-agent.sh coding --ticket PLAN-001
 
-# QA (Git 브랜치 자동 생성)
+# QA
 bash scripts/run-agent.sh qa --ticket PLAN-001
 ```
 
 **주요 기능:**
 - `.project-config.json`의 `current_project` 자동 인식
-- PM, Coding, QA 실행 시 티켓 번호 기반 Git 브랜치 자동 생성/전환
-- 브랜치 생성 실패 시에도 작업 계속 진행
 
 ---
 
@@ -97,24 +95,6 @@ bash scripts/rate-limit-check.sh [agent_name]
 
 #### `parse_usage.py`
 API 사용량 파싱 (내부 사용)
-
----
-
-### Git 관리
-
-#### `git-branch-helper.sh`
-Git 브랜치 자동 관리
-
-```bash
-# 브랜치 준비
-bash scripts/git-branch-helper.sh prepare coding PLAN-001 user-auth
-
-# 현재 상태 확인
-bash scripts/git-branch-helper.sh status
-
-# 설정 확인
-bash scripts/git-branch-helper.sh config
-```
 
 ---
 
@@ -190,18 +170,15 @@ team/projects/
     └── src/
 ```
 
-### Git 브랜치 작업
+### Git 작업
 
-`git-branch-helper.sh`와 `run-agent.sh`는 **프로젝트 리포지토리** 내에서 Git 작업을 수행합니다.
+Git 브랜치 관리는 사용자가 직접 수행합니다.
 
 ```bash
-cd team
-bash scripts/run-agent.sh coding --ticket PLAN-001
+cd team/projects/{current_project}
 
-# 내부 동작:
-# 1. projects/{current_project}/.git에서 feature/PLAN-001-xxx 브랜치 생성
-# 2. 해당 브랜치로 전환
-# 3. 코드 작성
+# 브랜치 작업은 직접 수행
+git checkout -b feature/PLAN-001-xxx
 ```
 
 ---

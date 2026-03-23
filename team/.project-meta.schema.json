@@ -184,15 +184,6 @@
       "type": "string",
       "enum": ["auto-generated", "verified", "community"],
       "description": "코딩 룰 상태"
-    },
-    "git_workflow": {
-      "type": "object",
-      "properties": {
-        "enabled": { "type": "boolean", "default": true },
-        "base_branch": { "type": "string", "default": "dev" },
-        "auto_create": { "type": "boolean", "default": true },
-        "auto_checkout": { "type": "boolean", "default": true }
-      }
     }
   }
 }

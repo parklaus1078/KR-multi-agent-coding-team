@@ -20,40 +20,6 @@
 - **"⚠️ 경고"** → 사용자에게 알리고, 동의 시 진행
 - **"🛑 중단"** → 즉시 작업 중단, 재개 가능 시간 안내 후 대기
 
-### 2. Git 브랜치 생성 (필수)
-
-**작업을 시작하기 전에 반드시 새 브랜치를 생성하고 체크아웃합니다.**
-
-```bash
-# 티켓 번호를 기반으로 브랜치 생성
-git checkout -b feature/PLAN-{티켓번호}-{기능명-slug}
-```
-
-**브랜치 네이밍 규칙:**
-- `feature/PLAN-{번호}-{slug}` (예: `feature/PLAN-001-user-auth`)
-- slug는 티켓 파일명에서 추출
-- 모두 소문자, 하이픈으로 구분
-
-**예시:**
-```bash
-# PLAN-001-user-auth.md 티켓인 경우
-git checkout -b feature/PLAN-001-user-auth
-
-# 브랜치 확인
-git branch
-```
-
-**브랜치가 이미 존재하는 경우:**
-```bash
-# 기존 브랜치로 체크아웃
-git checkout feature/PLAN-001-user-auth
-
-# 최신 상태 확인
-git status
-```
-
-**⚠️ 중요:** 브랜치 생성 없이 main/dev 브랜치에서 직접 작업 금지!
-
 ---
 
 ## 📂 작업 시작 시 필수 확인 사항
@@ -284,19 +250,11 @@ projects/admin-dashboard/src/
 ✅ 코드 구현 완료
 
 📍 프로젝트: {current_project}
-📍 현재 브랜치: feature/PLAN-001-user-auth
 📝 생성/수정된 파일: {N}개
 
 다음 단계:
 1. 코드 리뷰: 생성된 파일을 검토하세요.
-2. 커밋 생성:
-   git add .
-   git commit -m "feat(PLAN-001): 유저 인증 구현"
-3. 푸시 (선택):
-   git push origin feature/PLAN-001-user-auth
-
-브랜치 상태 확인:
-   bash scripts/git-branch-helper.sh status
+2. 필요 시 Git 커밋/푸시는 직접 수행하세요.
 ```
 
 ---
@@ -381,7 +339,6 @@ projects/admin-dashboard/src/
 
 **작업 전:**
 - [ ] Rate Limit 체크 완료
-- [ ] **Git 브랜치 생성 및 체크아웃 완료** (feature/PLAN-{번호}-{slug})
 - [ ] `.project-config.json` 읽기
 - [ ] `projects/{current_project}/.project-meta.json` 읽기
 - [ ] 티켓 파일 읽기

@@ -20,8 +20,6 @@
 - **"⚠️ 경고"** → 사용자에게 알리고, 동의 시 진행
 - **"🛑 중단"** → 즉시 작업 중단, 재개 가능 시간 안내 후 대기
 
-**참고:** Git 브랜치는 `run-agent.sh`에서 자동으로 생성됩니다.
-
 ---
 
 ## 📂 작업 시작 시 필수 확인 사항
@@ -326,7 +324,6 @@ func TestMain(m *testing.M) {
 ✅ 테스트 코드 작성 완료
 
 📍 프로젝트: {current_project}
-📍 현재 브랜치: test/PLAN-001-user-auth
 📝 생성/수정된 테스트 파일: {N}개
 
 다음 단계:
@@ -350,12 +347,7 @@ func TestMain(m *testing.M) {
    # JavaScript
    npm run test:coverage
 
-3. 커밋 생성:
-   git add .
-   git commit -m "test(PLAN-001): 유저 인증 테스트 작성"
-
-4. 푸시 (선택):
-   git push origin test/PLAN-001-user-auth
+3. 필요 시 Git 커밋/푸시는 직접 수행하세요.
 ```
 
 ---
@@ -453,7 +445,6 @@ func TestMain(m *testing.M) {
 
 **작업 전:**
 - [ ] Rate Limit 체크 완료
-- [ ] Git 브랜치 준비 완료
 - [ ] `.project-config.json` 읽기
 - [ ] `projects/{current_project}/.project-meta.json` 읽기
 - [ ] 테스트 케이스 파일 읽기
