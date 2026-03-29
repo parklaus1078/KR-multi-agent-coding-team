@@ -68,25 +68,30 @@ team/
 │   └── _verified/                   # 사람이 검증
 │
 ├── .config/                         # 시스템 설정
-│   └── git-workflow.json
+│   ├── auto-responses.json
+│   └── log-schema.json
+│
+├── .memory/                         # 학습 시스템
+│   ├── patterns.json
+│   ├── commit-history.json
+│   └── review-history.json
 │
 ├── scripts/                         # 유틸리티 스크립트
 │   ├── init-project.sh              # 프로젝트 초기화
 │   ├── switch-project.sh            # 프로젝트 전환
 │   ├── run-agent.sh                 # 에이전트 실행
-│   ├── show-logs.sh                 # 로그 조회
-│   ├── git-branch-helper.sh         # Git 브랜치 관리
-│   └── rate-limit-check.sh          # Rate Limit 체크
+│   ├── resume-session.sh            # 세션 재개 ⭐
+│   ├── run-skill.sh                 # 스킬 실행
+│   └── auto_pipeline_v2.py          # 자동 파이프라인
 │
 ├── projects/                        # 프로젝트 작업 공간
-│   ├── project-a/                   # 각 프로젝트는 독립 Git 리포지토리
-│   │   ├── .project-meta.json       # ← 프로젝트 스택 세팅
-│   │   ├── .git/                    # ← 프로젝트 자체의 Git
-│   │   ├── planning/
-│   │   ├── src/
-│   │   └── logs/
-│   └── project-b/
-│       └── ...
+│   └── {project-name}/              # 각 프로젝트는 독립 Git 리포지토리
+│       ├── .git/                    # ← 프로젝트 자체의 Git
+│       ├── .project-meta.json       # ← 프로젝트 스택 세팅
+│       ├── .sessions/               # ⭐ 세션 저장
+│       ├── planning/
+│       ├── logs/
+│       └── src/
 │
 ├── .project-config.json             # 현재 활성 프로젝트
 └── README.md                        # 이 파일
@@ -114,11 +119,13 @@ bash scripts/run-agent.sh coding --ticket PLAN-005
 ## 📚 자세한 문서
 
 - [루트 README.md](../README.md) - 전체 시스템 개요
+- [프로젝트 구조](../project-structure.md) - 전체 파일 및 디렉토리 목록
 - [스크립트 가이드](scripts/README.md) - 각 스크립트 사용법
+- [세션 관리](docs/session-management.md) - 세션 재개 및 포크 ⭐
 - [코딩 룰 가이드](.rules/README.md) - 코딩 룰 시스템
-- [아키텍처 문서](../docs/architecture-final.md) - 상세 아키텍처
+- [아키텍처 문서](../docs/architecture.md) - 상세 아키텍처
 
 ---
 
-**버전**: v0.0.2
-**최종 업데이트**: 2026-03-12
+**버전**: v0.0.3
+**최종 업데이트**: 2026-03-24

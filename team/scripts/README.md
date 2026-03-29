@@ -86,15 +86,31 @@ bash scripts/show-logs.sh coding
 bash scripts/show-logs.sh --all
 ```
 
-#### `rate-limit-check.sh`
-Claude API Rate Limit 확인
+### 세션 관리
+
+#### `resume-session.sh`
+에이전트 세션 재개
 
 ```bash
-bash scripts/rate-limit-check.sh [agent_name]
+# 세션 목록 확인
+bash scripts/resume-session.sh --list
+
+# 세션 재개
+bash scripts/resume-session.sh PLAN-001 pm
+bash scripts/resume-session.sh PLAN-001 coding
+bash scripts/resume-session.sh PLAN-001 qa
+
+# 세션 포크 (새 세션으로 실험)
+bash scripts/resume-session.sh PLAN-001 coding --fork
 ```
 
-#### `parse_usage.py`
-API 사용량 파싱 (내부 사용)
+**기능:**
+- 저장된 세션 목록 표시
+- CLAUDE.md 자동 로드
+- 프로젝트 디렉토리로 자동 이동
+- Fork 모드 지원
+
+**상세 가이드:** [docs/session-management.md](../docs/session-management.md)
 
 ---
 

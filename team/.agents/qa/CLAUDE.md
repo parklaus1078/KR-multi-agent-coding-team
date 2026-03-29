@@ -8,18 +8,6 @@
 
 ---
 
-## ⚡ 작업 시작 전 필수 체크 (절대 생략 불가)
-
-### 1. Rate Limit 체크
-
-```bash
-! bash scripts/rate-limit-check.sh qa
-```
-
-- **"✅ 여유 있음"** → 작업 진행
-- **"⚠️ 경고"** → 사용자에게 알리고, 동의 시 진행
-- **"🛑 중단"** → 즉시 작업 중단, 재개 가능 시간 안내 후 대기
-
 ---
 
 ## 📂 작업 시작 시 필수 확인 사항
@@ -47,65 +35,6 @@ cat projects/{current_project}/.project-meta.json
 ### Step 0-3. 티켓 번호 확인
 
 사용자로부터 전달받은 티켓 번호 (예: PLAN-001)
-
----
-
-## 🛠️ Skills 통합 (Phase 3.3)
-
-QA Agent는 테스트 작성 후 **test-runner skill**을 사용하여 자동 실행합니다.
-
-### 1. test-runner skill (필수)
-
-테스트 코드 작성 완료 후 자동 실행:
-
-```bash
-# 전체 테스트 + 커버리지
-bash scripts/run-skill.sh test-runner --all --coverage
-```
-
-**검증 항목**:
-- ✅ 모든 테스트 통과 (실패 0개)
-- ✅ 커버리지 80% 이상
-- ⚠️ Flaky 테스트 감지
-- ⚠️ 느린 테스트 감지 (> 1초)
-
-**테스트 실패 시**:
-```bash
-# 실패 원인 분석
-# → 코드 수정 또는 테스트 수정
-# → 재실행
-bash scripts/run-skill.sh test-runner --all
-```
-
-**커버리지 부족 시**:
-- 테스트 추가 작성
-- 커버되지 않은 라인 확인
-- 재실행하여 80% 달성
-
-### 2. review-pr skill (PR 생성 후)
-
-PR 생성 시 자동 리뷰:
-
-```bash
-# PR 리뷰 (auto-pipeline에서 실행)
-bash scripts/run-skill.sh review-pr {PR번호}
-```
-
-**검증 항목**:
-- 완전성 (테스트 존재, TODO 없음)
-- 품질 (함수 길이, 복잡도)
-- 보안 (하드코딩 비밀번호, SQL Injection)
-
-### 작업 완료 체크리스트
-
-테스트 작성 및 실행 완료 후:
-
-- [ ] 모든 테스트 파일 생성 완료
-- [ ] test-runner skill 통과 (실패 0개)
-- [ ] 커버리지 80% 이상
-- [ ] "✅ QA Agent 작업 완료" 메시지 출력
-
-**다음 단계**: commit skill → PR 생성 → review-pr skill
 
 ---
 
@@ -423,7 +352,6 @@ func TestMain(m *testing.M) {
 
 ## 🚫 금지 사항
 
-- Rate Limit 체크 없이 작업 시작 금지
 - 로그 없이 작업 완료 처리 금지
 - 테스트 케이스에 없는 항목 임의 추가 금지
 - 구현 코드 없이 테스트만 작성 금지 (TDD 아닌 경우)
@@ -444,7 +372,6 @@ func TestMain(m *testing.M) {
 ## 📋 작업 체크리스트
 
 **작업 전:**
-- [ ] Rate Limit 체크 완료
 - [ ] `.project-config.json` 읽기
 - [ ] `projects/{current_project}/.project-meta.json` 읽기
 - [ ] 테스트 케이스 파일 읽기

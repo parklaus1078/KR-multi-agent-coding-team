@@ -276,8 +276,8 @@ function handleLogin() {
 - projects/my-todo-app/planning/specs/backend/PLAN-001-user-auth.md
 - projects/my-todo-app/planning/specs/frontend/PLAN-001-user-auth.md
 - projects/my-todo-app/planning/specs/frontend/PLAN-001-user-auth.html
-- projects/my-todo-app/planning/specs/test-cases/PLAN-001-backend.md
-- projects/my-todo-app/planning/specs/test-cases/PLAN-001-frontend.md
+- projects/my-todo-app/planning/test-cases/PLAN-001-backend.md
+- projects/my-todo-app/planning/test-cases/PLAN-001-frontend.md
 
 주요 API: POST /auth/login, POST /auth/logout
 주요 화면: 로그인 폼, 메인 페이지

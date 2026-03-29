@@ -50,7 +50,7 @@ if [[ -z "$AGENT_NAME" ]]; then
     echo "에이전트 목록:"
     echo "  stack-initializer --config <경로>           스택 초기화"
     echo "  project-planner   --project <설명>          프로젝트 분해 → tickets/ 생성"
-    echo "  pm                --ticket-file <경로>      티켓 → 명세서 생성"
+    echo "  pm                --ticket <티켓번호>        티켓 → 명세서 생성"
     echo "  coding            --ticket <티켓번호>        코드 구현 (모든 타입)"
     echo "  qa                --ticket <티켓번호>        테스트 작성 (모든 타입)"
     echo ""
@@ -146,18 +146,39 @@ case "$AGENT_NAME" in
         fi
         ;;
     pm)
-        if [[ -z "$TICKET_FILE" ]]; then
-            echo "❌ pm은 --ticket-file 옵션이 필요합니다."
-            echo "   예: bash scripts/run-agent.sh pm --ticket-file $PROJECT_PATH/planning/tickets/PLAN-001-user-auth.md"
+        # --ticket-file 또는 --ticket 둘 중 하나 필요
+        if [[ -z "$TICKET_FILE" ]] && [[ -z "$TICKET_NUM" ]]; then
+            echo "❌ pm은 --ticket-file 또는 --ticket 옵션이 필요합니다."
+            echo "   예1: bash scripts/run-agent.sh pm --ticket PLAN-001"
+            echo "   예2: bash scripts/run-agent.sh pm --ticket-file $PROJECT_PATH/planning/tickets/PLAN-001-user-auth.md"
             exit 1
         fi
-        # 상대 경로를 절대 경로로 변환
-        if [[ ! "$TICKET_FILE" =~ ^/ ]]; then
-            TICKET_FILE="$WORKSPACE_ROOT/$TICKET_FILE"
+
+        # --ticket 옵션 사용 시 티켓 파일 자동 찾기
+        if [[ -n "$TICKET_NUM" ]] && [[ -z "$TICKET_FILE" ]]; then
+            TICKET_FILE_PATTERN="$PROJECT_PATH/planning/tickets/${TICKET_NUM}-*.md"
+            TICKET_FILE=$(ls $TICKET_FILE_PATTERN 2>/dev/null | head -1)
+
+            if [[ -z "$TICKET_FILE" ]]; then
+                echo "❌ 티켓 파일을 찾을 수 없습니다: $TICKET_FILE_PATTERN"
+                echo "   프로젝트: $CURRENT_PROJECT"
+                echo "   경로: $PROJECT_PATH/planning/tickets/"
+                exit 1
+            fi
+
+            echo "📋 티켓 파일 발견: $(basename "$TICKET_FILE")"
         fi
-        if [[ ! -f "$TICKET_FILE" ]]; then
-            echo "❌ 티켓 파일을 찾을 수 없습니다: $TICKET_FILE"
-            exit 1
+
+        # --ticket-file 직접 지정 시 경로 처리
+        if [[ -n "$TICKET_FILE" ]]; then
+            # 상대 경로를 절대 경로로 변환
+            if [[ ! "$TICKET_FILE" =~ ^/ ]]; then
+                TICKET_FILE="$WORKSPACE_ROOT/$TICKET_FILE"
+            fi
+            if [[ ! -f "$TICKET_FILE" ]]; then
+                echo "❌ 티켓 파일을 찾을 수 없습니다: $TICKET_FILE"
+                exit 1
+            fi
         fi
 
         INITIAL_PROMPT="$(cat "$TICKET_FILE")"
@@ -189,9 +210,6 @@ if ! command -v claude &>/dev/null; then
     echo "   설치: https://docs.claude.ai/claude-code"
     exit 1
 fi
-
-# ── Rate Limit 사전 기록 ─────────────────────────────────────
-python3 "$SCRIPT_DIR/parse_usage.py" "$AGENT_NAME" --log 2>/dev/null || true
 
 # ── 에이전트 시작 ────────────────────────────────────────────
 echo ""
@@ -270,7 +288,8 @@ echo "$INITIAL_PROMPT"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-exec claude \
+# exec 제거: trap이 정상 동작하도록 수정
+claude \
     --model claude-sonnet-4-5 \
     --session-id "$SESSION_ID" \
     --name "$SESSION_NAME" \
@@ -279,3 +298,5 @@ exec claude \
     <<EOF
 $INITIAL_PROMPT
 EOF
+
+# claude 종료 후 세션 정보 저장 (trap으로 자동 실행됨)

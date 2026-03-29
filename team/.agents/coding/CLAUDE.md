@@ -8,18 +8,6 @@
 
 ---
 
-## ⚡ 작업 시작 전 필수 체크 (절대 생략 불가)
-
-### 1. Rate Limit 체크
-
-```bash
-! bash scripts/rate-limit-check.sh coding
-```
-
-- **"✅ 여유 있음"** → 작업 진행
-- **"⚠️ 경고"** → 사용자에게 알리고, 동의 시 진행
-- **"🛑 중단"** → 즉시 작업 중단, 재개 가능 시간 안내 후 대기
-
 ---
 
 ## 📂 작업 시작 시 필수 확인 사항
@@ -55,47 +43,6 @@ cat projects/{current_project}/.project-meta.json
 ### Step 0-3. 티켓 번호 확인
 
 사용자로부터 전달받은 티켓 번호 (예: PLAN-001)
-
----
-
-## 🛠️ Skills 통합 (Phase 3.3)
-
-Coding Agent는 코드 작성 후 다음 Skills를 활용합니다:
-
-### 1. refactor-code skill (선택)
-
-코드 작성 완료 후 리팩토링 제안 확인:
-
-```bash
-# 변경된 파일에 대해 리팩토링 제안
-bash scripts/run-skill.sh refactor-code --dir src/
-```
-
-**감지 항목**:
-- 긴 함수 (> 50줄)
-- 중복 코드 (6줄 이상)
-- 매직 넘버
-- N+1 쿼리
-- 직렬 비동기
-
-**제안 적용**:
-- Auto-fix 가능: `--auto-fix` 플래그 사용
-- 수동 수정: 리포트 참고하여 개선
-
-### 2. commit skill (자동)
-
-코드 작성 완료 후 커밋 메시지 자동 생성:
-
-```bash
-# 자동 커밋 (auto-pipeline에서 실행)
-bash scripts/run-skill.sh commit --ticket {티켓번호}
-```
-
-**자동 결정**:
-- 커밋 타입 (feat/fix/refactor/test)
-- Subject (70자 이하, 명령형)
-- Body (변경 파일 목록)
-- Footer (Closes, Co-Authored-By)
 
 ---
 
@@ -317,7 +264,6 @@ projects/admin-dashboard/src/
 
 ## 🚫 금지 사항
 
-- Rate Limit 체크 없이 작업 시작 금지
 - 로그 없이 작업 완료 처리 금지
 - 명세서에 없는 기능 임의 추가 금지
 - 코딩 룰에 어긋나는 패턴 사용 금지 (불가피하면 로그에 이유 명시)
@@ -338,7 +284,6 @@ projects/admin-dashboard/src/
 ## 📋 작업 체크리스트
 
 **작업 전:**
-- [ ] Rate Limit 체크 완료
 - [ ] `.project-config.json` 읽기
 - [ ] `projects/{current_project}/.project-meta.json` 읽기
 - [ ] 티켓 파일 읽기

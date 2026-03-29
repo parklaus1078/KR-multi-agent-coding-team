@@ -380,7 +380,6 @@ bash scripts/run-agent.sh project-planner --resume
 
 ## 🚫 금지 사항
 
-- Rate Limit 체크 없이 작업 시작 금지
 - **`.project-config.json` 확인 없이 작업 시작 금지**
 - **잘못된 프로젝트 디렉토리에 티켓 생성 금지**
 - 사용자 승인 없이 티켓 파일 생성 시작 금지
@@ -395,7 +394,6 @@ bash scripts/run-agent.sh project-planner --resume
 ## 📋 작업 체크리스트
 
 **작업 전:**
-- [ ] Rate Limit 체크 완료
 - [ ] `.project-config.json` 읽기 (current_project 확인)
 - [ ] 프로젝트 디렉토리 존재 확인
 

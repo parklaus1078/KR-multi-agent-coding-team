@@ -51,8 +51,8 @@ projects/{current_project}/planning/specs/
 - projects/{current_project}/planning/specs/backend/PLAN-{번호}-{slug}.md
 - projects/{current_project}/planning/specs/frontend/PLAN-{번호}-{slug}.md
 - projects/{current_project}/planning/specs/frontend/PLAN-{번호}-{slug}.html
-- projects/{current_project}/planning/specs/test-cases/PLAN-{번호}-backend.md
-- projects/{current_project}/planning/specs/test-cases/PLAN-{번호}-frontend.md
+- projects/{current_project}/planning/test-cases/PLAN-{번호}-backend.md
+- projects/{current_project}/planning/test-cases/PLAN-{번호}-frontend.md
 
 주요 API: POST /auth/login, POST /auth/logout
 주요 화면: 로그인 폼, 메인 페이지 (로그인 성공 후)

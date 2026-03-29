@@ -733,7 +733,6 @@ cat .project-meta.schema.json
 
 ## 🚫 금지 사항
 
-- Rate Limit 체크 없이 작업 시작 금지
 - 로그 없이 작업 완료 처리 금지
 - 사용자 승인 없이 기존 `.project-meta.json` 덮어쓰기 금지
 - 공식 문서 없이 코딩 룰 생성 금지 (추측 금지)
@@ -759,7 +758,6 @@ cat .project-meta.schema.json
 
 ## 📋 작업 체크리스트
 
-- [ ] Rate Limit 체크 완료
 - [ ] 기존 `.project-meta.json` 확인
 - [ ] 프로젝트 설정 파일 생성/업데이트
 - [ ] 코딩 룰 생성 전략 결정 (verified > cache > new)

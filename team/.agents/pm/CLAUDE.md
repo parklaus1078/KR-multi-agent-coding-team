@@ -50,14 +50,11 @@ gotchas.md 먼저 읽기
 ### Step 0: 필수 확인 (절대 생략 불가)
 
 ```bash
-# 1. Rate Limit 체크
-bash scripts/rate-limit-check.sh pm
-
-# 2. 현재 프로젝트 확인
+# 1. 현재 프로젝트 확인
 cat .project-config.json
 # → current_project 추출
 
-# 3. 프로젝트 타입 확인
+# 2. 프로젝트 타입 확인
 cat projects/{current_project}/.project-meta.json
 # → project_type 추출
 ```
@@ -99,49 +96,6 @@ cat .agents/pm/workflows/{project_type}.md
 - `data-pipeline` → workflows/data-pipeline.md
 
 ---
-
-## 🛠️ Skills 통합 (Phase 3.3)
-
-PM Agent는 명세서 생성 후 **validate-spec skill**을 사용하여 자동 검증합니다.
-
-### 명세서 검증 (자동)
-
-명세서 파일 생성이 완료되면:
-
-```bash
-# validate-spec skill 실행
-bash scripts/run-skill.sh validate-spec {티켓번호}
-```
-
-**검증 항목**:
-- ✅ 완전성: Acceptance Criteria 충족
-- ✅ 범위: Out-of-Scope 준수
-- ✅ 품질: API 명세, UI 요구사항 완성도
-- ✅ 일관성: 프로젝트 타입 일치
-
-**검증 실패 시**:
-```bash
-# Auto-fix 시도
-bash scripts/run-skill.sh validate-spec {티켓번호} --auto-fix
-
-# Auto-fix 불가능한 이슈가 있다면 수동 수정 후 재검증
-```
-
-**검증 통과 조건**:
-- 모든 필수 항목 존재
-- 에러 0개
-- 경고 3개 이하
-
-### 작업 완료 체크리스트
-
-명세서 생성 및 검증 완료 후:
-
-- [ ] 모든 명세서 파일 생성 완료
-- [ ] validate-spec skill 통과 (에러 0개)
-- [ ] 로그 파일 생성 (`logs/pm/{티켓번호}.json`)
-- [ ] "✅ PM Agent 작업 완료" 메시지 출력
-
-**다음 단계**: Coding Agent가 명세서를 기반으로 구현 시작
 
 **워크플로우 파일에는 다음이 포함됩니다**:
 - 프로젝트 타입별 산출물 목록
@@ -307,12 +261,11 @@ projects/{current_project}/planning/specs/
 
 상세 내용은 `gotchas.md` 참조. 핵심만:
 
-1. ❌ Rate Limit 체크 없이 작업 시작
-2. ❌ `.project-config.json` 확인 없이 작업
-3. ❌ 잘못된 디렉토리에 명세서 생성 (gotchas.md #2)
-4. ❌ 티켓 범위 벗어난 기능 추가 (gotchas.md #1)
-5. ❌ HTML에 외부 라이브러리 사용 (gotchas.md #4)
-6. ❌ Coding Agent 역할 침범 (gotchas.md #10)
+1. ❌ `.project-config.json` 확인 없이 작업
+2. ❌ 잘못된 디렉토리에 명세서 생성 (gotchas.md #2)
+3. ❌ 티켓 범위 벗어난 기능 추가 (gotchas.md #1)
+4. ❌ HTML에 외부 라이브러리 사용 (gotchas.md #4)
+5. ❌ Coding Agent 역할 침범 (gotchas.md #10)
 7. ❌ 사용자 승인 없이 산출물 생성
 8. ❌ 로그 작성 생략
 
@@ -322,7 +275,6 @@ projects/{current_project}/planning/specs/
 
 **작업 전**:
 - [ ] gotchas.md 읽음
-- [ ] Rate Limit 체크 완료
 - [ ] .project-config.json → current_project 확인
 - [ ] .project-meta.json → project_type 확인
 - [ ] workflows/{project_type}.md 읽음

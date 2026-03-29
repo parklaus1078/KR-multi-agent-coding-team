@@ -45,7 +45,7 @@ projects/{current_project}/planning/specs/
 
 생성 예정 파일:
 - projects/{current_project}/planning/specs/PLAN-{번호}-command-spec.md
-- projects/{current_project}/planning/specs/test-cases/PLAN-{번호}-command.md
+- projects/{current_project}/planning/test-cases/PLAN-{번호}-command.md
 
 주요 커맨드: mycli init
 플래그: --name, --template

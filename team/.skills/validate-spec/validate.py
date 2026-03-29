@@ -319,7 +319,7 @@ class SpecValidator:
         """접근성 테스트 검사 - Gotcha #9"""
         keywords = self.rules["rules"]["quality_gates"]["accessibility"]["keywords"]
 
-        test_files = list(self.project_root.glob(f"planning/specs/test-cases/{self.ticket_num}*frontend.md"))
+        test_files = list(self.project_root.glob(f"planning/test-cases/{self.ticket_num}*frontend.md"))
 
         if not test_files:
             return
