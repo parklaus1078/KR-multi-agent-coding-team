@@ -187,7 +187,7 @@ test_command = get_test_command(framework)  # 동적 감지
 - Agent-Skill 분리
 - Memory 시스템
 
-### Phase 4: 웹 플랫폼 ✅ 완료
+### Phase 4: 웹 플랫폼 ✅ 완료 - 삭제
 - FastAPI REST API (25+ 엔드포인트)
 - 웹 대시보드
 - Discord 연동
