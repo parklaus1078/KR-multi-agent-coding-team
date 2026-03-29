@@ -1,0 +1,21 @@
+{
+  "ticket": "{TICKET_NUMBER}",
+  "iteration": {ITERATION_NUMBER},
+  "total_score": {TOTAL_SCORE},
+  "breakdown": {
+    "functionality": {FUNCTIONALITY_SCORE},
+    "code_quality": {CODE_QUALITY_SCORE},
+    "test_coverage": {TEST_COVERAGE_SCORE},
+    "documentation": {DOCUMENTATION_SCORE}
+  },
+  "verdict": "{VERDICT}",
+  "needs_rework": {NEEDS_REWORK_BOOL},
+  "critical_issues": [
+    {CRITICAL_ISSUES_ARRAY}
+  ],
+  "recommended_improvements": [
+    {RECOMMENDED_IMPROVEMENTS_ARRAY}
+  ],
+  "timestamp": "{TIMESTAMP}",
+  "evaluator_version": "v0.0.4"
+}

@@ -276,6 +276,25 @@ save_session_info() {
 # Trap으로 종료 시 세션 저장
 trap save_session_info EXIT
 
+# ── 메모리 시스템 로드 ──────────────────────────────────────
+MEMORY_CONTEXT=""
+MEMORY_LOADER="$SCRIPT_DIR/memory_loader.py"
+
+if [[ -f "$MEMORY_LOADER" ]]; then
+    echo "📚 학습된 패턴 로드 중..."
+    MEMORY_CONTEXT=$(python3 "$MEMORY_LOADER" "$AGENT_NAME" 2>&1 | grep -v "^=\|^Memory Loader")
+
+    if [[ -n "$MEMORY_CONTEXT" ]]; then
+        echo "✅ 메모리 시스템 로드 완료"
+    else
+        echo "ℹ️  학습된 패턴 없음 (첫 실행)"
+    fi
+else
+    echo "⚠️  memory_loader.py를 찾을 수 없습니다: $MEMORY_LOADER"
+    echo "   메모리 시스템 없이 진행합니다."
+fi
+echo ""
+
 # ── claude 실행 ──────────────────────────────────────────────
 # --append-system-prompt: Claude Code 기본값을 유지하면서 CLAUDE.md를 추가
 # (--system-prompt 사용 시 Claude Code 내장 도구 설명이 제거되므로 사용 금지)
@@ -288,6 +307,17 @@ echo "$INITIAL_PROMPT"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
+# 최종 프롬프트 조합: 메모리 컨텍스트 + 초기 프롬프트
+FINAL_PROMPT="$INITIAL_PROMPT"
+
+if [[ -n "$MEMORY_CONTEXT" ]]; then
+    FINAL_PROMPT="$MEMORY_CONTEXT
+
+───────────────────────────────────────────────────────
+
+$INITIAL_PROMPT"
+fi
+
 # exec 제거: trap이 정상 동작하도록 수정
 claude \
     --model claude-sonnet-4-5 \
@@ -296,7 +326,7 @@ claude \
     --append-system-prompt "$(cat "$CLAUDE_MD")" \
     --allowedTools "Bash" "Read" "Edit" "Write" \
     <<EOF
-$INITIAL_PROMPT
+$FINAL_PROMPT
 EOF
 
 # claude 종료 후 세션 정보 저장 (trap으로 자동 실행됨)

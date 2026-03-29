@@ -20,11 +20,16 @@
 **읽는 순서**:
 ```
 gotchas.md 먼저 읽기
-→ .memory/patterns.json에서 학습된 패턴 확인
+→ .memory/patterns.json에서 학습된 패턴 확인 (자동 로드됨!)
 → .project-meta.json에서 project_type 확인
 → workflows/{project_type}.md 읽기
 → 작업 시작
 ```
+
+**💡 `.memory/patterns.json` 자동 로드**:
+- `run-agent.sh pm` 실행 시 자동으로 로드됩니다.
+- 학습된 패턴이 초기 프롬프트에 포함되어 전달됩니다.
+- 수동으로 읽을 필요 없습니다!
 
 ---
 
@@ -286,9 +291,40 @@ projects/{current_project}/planning/specs/
 - [ ] 올바른 경로에 파일 생성 (projects/{current_project}/...)
 
 **작업 후**:
-- [ ] 로그 작성 완료
+- [ ] 로그 작성 완료 (중요한 의사결정만 기록)
 - [ ] 생성된 모든 파일 나열
 - [ ] "✅ PM Agent 작업 완료" 메시지 출력
+
+**💾 로그 작성 자동화 (선택)**:
+```python
+# Python API 사용 (에이전트 내부에서)
+from scripts.decision_logger import DecisionLogger
+
+logger = DecisionLogger(
+    project_path=Path("projects/my-project"),
+    agent_name="pm",
+    ticket="PLAN-001"
+)
+
+logger.add_decision(
+    decision_id="D-001",
+    title="OAuth 제외",
+    context="티켓에 'login' 명시, 방법 미지정",
+    options=["Email/Password만", "OAuth", "둘 다"],
+    selected="Email/Password만",
+    reason="Acceptance Criteria에 email/password만 명시",
+    risk_level="low",
+    confidence=0.95,
+    gotcha_applied="gotchas.md#1"
+)
+
+logger.set_completion_status("success")
+logger.save()
+logger.save_markdown()
+```
+
+로그 기록이 번거로우면 **Markdown 형식으로만 작성**해도 됩니다.
+나중에 학습 시스템이 JSON과 Markdown 모두 분석 가능합니다.
 
 ---
 
