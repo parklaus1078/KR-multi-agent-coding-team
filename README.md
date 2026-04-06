@@ -109,24 +109,42 @@ mact auto --project "프로젝트 설명" --auto-improve
 # Step 1: 티켓 생성
 mact plan --project "블로그 시스템: 글쓰기, 댓글 기능"
 
-# Step 2: 티켓별 개발
-mact run pm --ticket PLAN-001        # 명세서 작성
-mact run coding --ticket PLAN-001     # 코드 구현
-mact run qa --ticket PLAN-001         # 테스트 작성
-mact run evaluator --ticket PLAN-001  # 코드 평가
+# Step 2: 명세서 작성
+mact run pm --ticket PLAN-001
 
-# Step 3: 품질 개선 (필요 시)
+# Step 3: 코드 구현
+mact run coding --ticket PLAN-001
+
+# Step 4: 코드 평가
+mact run evaluator --ticket PLAN-001  # 예: 82/100
+
+# Step 5: 품질 개선 (점수 낮으면)
 mact improve PLAN-001 --target 90
+# → Coding ↔ Evaluator 반복 (90점까지)
+
+# Step 6: 테스트 작성 (품질 만족 후)
+mact run qa --ticket PLAN-001
 ```
+
+**⚠️ 중요**: QA Agent는 코드 품질이 만족스러울 때 **마지막에** 실행합니다.
 
 ### 자동 품질 개선
 
 ```bash
+# 전제: Coding Agent 최소 1회 실행 완료
 # Coding ↔ Evaluator 반복으로 90점까지
 mact improve PLAN-001 --target 90
 
 # 최대 15회 반복, 95점 목표
 mact improve PLAN-001 --target 95 --max-iterations 15
+```
+
+**동작:**
+```
+1. Evaluator 평가 (현재 점수 확인)
+2. 점수 < 목표 → Coding Agent 재실행 (피드백 반영)
+3. Evaluator 재평가
+4. 반복 (목표 점수 달성 또는 최대 횟수까지)
 ```
 
 ### 학습 시스템 (Memory)
@@ -158,17 +176,23 @@ mact use simple-todo
 # 2. 티켓 생성
 mact plan --project "할일 추가, 완료 표시, 삭제 기능"
 
-# 3. 첫 티켓 개발
-mact run pm --ticket PLAN-001
-mact run coding --ticket PLAN-001
+# 3. 첫 티켓 개발 (올바른 순서)
+mact run pm --ticket PLAN-001          # 명세서
+mact run coding --ticket PLAN-001      # 구현
+mact run evaluator --ticket PLAN-001   # 평가 (예: 78/100)
+
+# 4. 품질 개선 (점수 낮으면)
+mact improve PLAN-001 --target 90      # 90점까지 반복
+
+# 5. 테스트 작성 (품질 만족 후)
 mact run qa --ticket PLAN-001
 
-# 4. 품질 개선
-mact improve PLAN-001 --target 90
-
-# 5. 나머지 티켓 반복
+# 6. 나머지 티켓 반복
 mact run pm --ticket PLAN-002
-# ...
+mact run coding --ticket PLAN-002
+mact run evaluator --ticket PLAN-002
+mact improve PLAN-002 --target 90
+mact run qa --ticket PLAN-002
 ```
 
 ### 예시 2: 블로그 시스템 (완전 자동화)
@@ -225,15 +249,22 @@ mact auto --project "이미지 업로드" --auto-improve
 └──────────────────────────────────────────┘
     ↓
 ┌──────────────────────────────────────────┐
+│  Evaluator Agent                         │  코드 품질 평가
+│  점수 82/100 → 개선 사항 제시            │
+└──────────────────────────────────────────┘
+    ↓ (점수 < 목표)
+    ↓ Coding ↔ Evaluator 반복 (5-15회)
+    ↓
+┌──────────────────────────────────────────┐
+│  Evaluator Agent (재평가)                │  개선된 코드 평가
+│  점수 93/100 → 목표 달성! ✅             │
+└──────────────────────────────────────────┘
+    ↓
+┌──────────────────────────────────────────┐
 │  QA Agent                                │  테스트 코드 작성
 │  pytest + Jest 테스트 생성               │
 └──────────────────────────────────────────┘
     ↓
-┌──────────────────────────────────────────┐
-│  Evaluator Agent                         │  코드 품질 평가
-│  점수 85/100 → 개선 사항 제시            │
-└──────────────────────────────────────────┘
-    ↓ (점수 낮으면 반복)
 구현 완료 ✅
 ```
 
